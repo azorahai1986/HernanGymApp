@@ -1,6 +1,6 @@
-package com.hernan.gymapp.user_type.data.data.domain.repository
+package com.hernan.gymapp.user_type.domain.repository
 
-import com.hernan.gymapp.user_type.data.data.domain.model.Client
+import com.hernan.gymapp.user_type.domain.model.Client
 import com.hernan.gymapp.common.state.ResourceFlow
 import kotlinx.coroutines.flow.Flow
 

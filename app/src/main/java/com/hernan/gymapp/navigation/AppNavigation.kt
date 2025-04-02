@@ -9,11 +9,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.hernan.gymapp.main_screen.presentation.ui.MainScreen
+import com.hernan.gymapp.user_type.presentation.viewmodel.ClientViewModel
 import com.hernan.gymapp.main_screen.presentation.viewmodel.StateViewModel
 import com.hernan.gymapp.ui_app.SplashScreen
 import com.hernan.gymapp.ui_app.TurnsScreen
 import com.hernan.gymapp.ui_app.UsersScreen
-import com.hernan.gymapp.user_type.data.data.presentation.ui.UsersTypeScreen
+import com.hernan.gymapp.user_type.presentation.ui.UsersTypeScreen
 
 @Preview(showBackground = true, widthDp = 320)
 
@@ -45,7 +46,13 @@ fun AppNavigation(){
             arguments = listOf(navArgument(name = "text") {
                 type = NavType.StringType
             })){
-            UsersTypeScreen(isdarkTheme, navController, it.arguments?.getString("text"))
+            val clientViewModel: ClientViewModel = hiltViewModel()
+            UsersTypeScreen(
+                isdarkTheme,
+                navController,
+                it.arguments?.getString("text"),
+                clientViewModel
+            )
         }
 
         composable(route = Screens.UsersScreen.routes + "/{text}",
