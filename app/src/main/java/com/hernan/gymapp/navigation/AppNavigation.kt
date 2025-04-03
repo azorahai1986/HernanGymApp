@@ -14,7 +14,7 @@ import com.hernan.gymapp.main_screen.presentation.viewmodel.StateViewModel
 import com.hernan.gymapp.ui_app.SplashScreen
 import com.hernan.gymapp.ui_app.TurnsScreen
 import com.hernan.gymapp.ui_app.UsersScreen
-import com.hernan.gymapp.user_type.presentation.ui.UsersTypeScreen
+import com.hernan.gymapp.user_type.presentation.ui.screens.UsersTypeScreen
 
 @Preview(showBackground = true, widthDp = 320)
 

@@ -4,13 +4,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.hernan.gymapp.user_type.domain.model.Client
 import com.hernan.gymapp.user_type.domain.repository.ClientRepository
 import com.hernan.gymapp.common.state.ResourceFlow
-import com.hernan.gymapp.main_screen.data.model.FirstStateDto
 import com.hernan.gymapp.user_type.data.model.ClientDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
