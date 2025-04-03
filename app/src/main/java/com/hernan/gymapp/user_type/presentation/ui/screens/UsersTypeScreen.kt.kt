@@ -20,7 +20,7 @@ import com.hernan.gymapp.common.state.ResourceFlow
 import com.hernan.gymapp.user_type.presentation.viewmodel.ClientViewModel
 import com.hernan.gymapp.user_type.domain.model.Client
 import com.hernan.gymapp.user_type.presentation.ui.tipe_users_view.UserListTypesUsers
-import com.hernan.gymapp.user_type.presentation.ui.toolbar.ToolbarUsersType
+import com.hernan.gymapp.common.ui_app.toolbar.ToolbarUsersType
 
 
 @Composable

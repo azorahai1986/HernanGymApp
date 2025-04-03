@@ -1,4 +1,4 @@
-package com.hernan.gymapp.user_type.presentation.ui.toolbar
+package com.hernan.gymapp.common.ui_app.toolbar
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme

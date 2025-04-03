@@ -21,9 +21,6 @@ class ClientViewModel @Inject constructor(
     private val _clientState = MutableStateFlow<ResourceFlow<List<Client>>>(ResourceFlow.Loading)
     val clientState: StateFlow<ResourceFlow<List<Client>>> = _clientState.asStateFlow()
 
-    /*init {
-        fetchClient("")
-    }*/
     fun fetchClient(clientId: String) {
         /**
          * Esta llamada garantiza que solo busque una vez al backend

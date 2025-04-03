@@ -11,10 +11,11 @@ import androidx.navigation.navArgument
 import com.hernan.gymapp.main_screen.presentation.ui.MainScreen
 import com.hernan.gymapp.user_type.presentation.viewmodel.ClientViewModel
 import com.hernan.gymapp.main_screen.presentation.viewmodel.StateViewModel
-import com.hernan.gymapp.ui_app.SplashScreen
-import com.hernan.gymapp.ui_app.TurnsScreen
-import com.hernan.gymapp.ui_app.UsersScreen
+import com.hernan.gymapp.common.ui_app.SplashScreen
+import com.hernan.gymapp.common.ui_app.TurnsScreen
+import com.hernan.gymapp.user_type_selected.presentation.ui.UsersScreen
 import com.hernan.gymapp.user_type.presentation.ui.screens.UsersTypeScreen
+import com.hernan.gymapp.user_type_selected.presentation.viewmodel.UserTypeSelectedVM
 
 @Preview(showBackground = true, widthDp = 320)
 
@@ -59,7 +60,8 @@ fun AppNavigation(){
             arguments = listOf(navArgument(name = "text") {
                 type = NavType.StringType
             })){
-            UsersScreen(isdarkTheme, navController, it.arguments?.getString("text"))
+            val userTypeSelectedVM: UserTypeSelectedVM = hiltViewModel()
+            UsersScreen(isdarkTheme, navController, it.arguments?.getString("text"), userTypeSelectedVM)
         }
 
     }

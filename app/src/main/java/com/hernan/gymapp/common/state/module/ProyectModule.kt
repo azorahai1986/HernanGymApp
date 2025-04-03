@@ -7,6 +7,9 @@ import com.hernan.gymapp.main_screen.domain.repository.FirstStateRepository
 import com.hernan.gymapp.main_screen.domain.usecase.FirstStateUseCase
 import com.hernan.gymapp.user_type.domain.usecase.GetClientUsecase
 import com.hernan.gymapp.user_type.data.repository.ClientRepositoryImpl
+import com.hernan.gymapp.user_type_selected.data.repository.UserTypeSelectedRepositoryImpl
+import com.hernan.gymapp.user_type_selected.domain.repository.UserTypeSelectedRepository
+import com.hernan.gymapp.user_type_selected.domain.usecase.UserTypeSelectedUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -60,5 +63,26 @@ object FirstStateUseCaseModule {
     @Provides
     fun provideFirstStateUsecase(repository: FirstStateRepository): FirstStateUseCase {
         return FirstStateUseCase(repository)
+    }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object UserTypeSelectedRepositoryModule {
+    @Provides
+    @Singleton
+    fun provideUserTypeSelected(
+        firestore: FirebaseFirestore
+    ): UserTypeSelectedRepository {
+        return UserTypeSelectedRepositoryImpl(firestore)
+    }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object UserTypeSelectedUseCaseModule {
+    @Provides
+    fun provideUseTypeSelectedUsecase(repository: UserTypeSelectedRepository): UserTypeSelectedUseCase {
+        return UserTypeSelectedUseCase(repository)
     }
 }

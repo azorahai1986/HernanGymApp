@@ -1,4 +1,4 @@
-package com.hernan.gymapp.ui_app
+package com.hernan.gymapp.common.ui_app
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
