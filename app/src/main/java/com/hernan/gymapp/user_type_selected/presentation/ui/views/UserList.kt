@@ -78,5 +78,10 @@ fun UserList(
                 color = MaterialTheme.colorScheme.surfaceTint
             )
         }
+        //TODO ver si es bueno agregar una luz por tipo de cliente. como una especie de semaforo señalador. Por ejemplo:
+        // Si es Basisc - Luz verde
+        // Si es MediaForce - Luz Amarilla
+        // Si es Strongest - Luz Roja.
+        // O ponerle un iconito distintivo. estudiar eso...
     }
 }

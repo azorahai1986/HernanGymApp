@@ -90,6 +90,11 @@ fun PersonDateScreen(
             )
 
            // DateUser(R.drawable.telephone_24, )
+            // TODO hacer que los datos que lleguen a DateUser sean dinamicos. Tal vez
+            //  reutilizar la vista de UserList. o la de la pantalla de inicio. Agregar
+            //  un item por cada valor string y agregar un icono particular para cada texto desde Firestore
+            //  Si ha pagado la cuota tal vez  podria ir un icono de tilde de color llamativo. si no una cruz o algo en tono apagado
+
             DateUser(user.name)
             DateUser(user.typeId)
         }
