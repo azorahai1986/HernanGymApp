@@ -1,4 +1,4 @@
-package com.hernan.gymapp.common.ui_app
+package com.hernan.gymapp.user_type_selected.presentation.ui.screen
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -22,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,27 +31,20 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.hernan.gymapp.R
-import com.hernan.gymapp.funtions.userList
-import kotlinx.coroutines.launch
-
-
-var userImage: Int? = null
-var userName: Int? = null
+import com.hernan.gymapp.user_type_selected.presentation.viewmodel.UserDetailViewModel
+import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
-fun PersonDateScreen(){
-
-    userList().map { item ->
-        userName = item.text
-        userImage = item.drawable
-    }
+fun PersonDateScreen(
+    userDetailViewModel: UserDetailViewModel = hiltViewModel()
+) {
     val bottomSheetHeight = with(LocalDensity.current) { 20.dp.toPx() }
+    val userState by userDetailViewModel.selectedUser.collectAsState()
 
     Box(
         modifier = Modifier
@@ -67,12 +60,13 @@ fun PersonDateScreen(){
             animatableHeight.animateTo(
                 targetValue = targetHeight,
                 animationSpec = tween(
-                    durationMillis = 300,
+                    durationMillis = 400,
                     easing = LinearOutSlowInEasing
                 )
             )
         }
 
+        userState?.let { user ->
         Column(
             Modifier
                 .graphicsLayer {
@@ -85,10 +79,8 @@ fun PersonDateScreen(){
                     shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
                 )
         ) {
-            Image(
-                painter = painterResource(R.drawable.fc4_self_massage),  //R.drawable.ab1_inversions
-                contentDescription = null,
-                contentScale = ContentScale.Crop, // puedo dar 3 estilos de imagen. Fit, FillBounds y Crop
+            GlideImage(
+                imageModel = { user.userImage ?: R.drawable.logo_eze_solo_nombre }, // 🔥 Carga la imagen desde los recursos
                 modifier = Modifier
                     .height(250.dp)
                     .width(250.dp)
@@ -98,20 +90,16 @@ fun PersonDateScreen(){
             )
 
            // DateUser(R.drawable.telephone_24, )
-            DateUser()
-            DateUser()
-
+            DateUser(user.name)
+            DateUser(user.typeId)
         }
 
-        // Toggle bottom sheet visibility
-        /*coroutineScoper!!.launch {
-            bottomSheetVisible = !bottomSheetVisible
-        }*/
+        } ?: Text(text = "Selecciona un usuario")
     }
 }
 
 @Composable
-private fun DateUser(){
+private fun DateUser(text: String) {
 
     Card(
         modifier = Modifier
@@ -136,7 +124,7 @@ private fun DateUser(){
                     .padding(10.dp)
                     .align(alignment = Alignment.CenterVertically)
             )
-            Text(text = "Main Content",
+            Text(text = text,
                 Modifier
                     .padding(5.dp)
                     .align(alignment = Alignment.CenterVertically)

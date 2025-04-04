@@ -1,6 +1,9 @@
 package com.hernan.gymapp.navigation
 
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
@@ -13,10 +16,11 @@ import com.hernan.gymapp.user_type.presentation.viewmodel.ClientViewModel
 import com.hernan.gymapp.main_screen.presentation.viewmodel.StateViewModel
 import com.hernan.gymapp.common.ui_app.SplashScreen
 import com.hernan.gymapp.common.ui_app.TurnsScreen
-import com.hernan.gymapp.user_type_selected.presentation.ui.UsersScreen
+import com.hernan.gymapp.user_type_selected.presentation.ui.screen.UsersScreen
 import com.hernan.gymapp.user_type.presentation.ui.screens.UsersTypeScreen
 import com.hernan.gymapp.user_type_selected.presentation.viewmodel.UserTypeSelectedVM
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true, widthDp = 320)
 
 @Composable
@@ -61,7 +65,15 @@ fun AppNavigation(){
                 type = NavType.StringType
             })){
             val userTypeSelectedVM: UserTypeSelectedVM = hiltViewModel()
-            UsersScreen(isdarkTheme, navController, it.arguments?.getString("text"), userTypeSelectedVM)
+            val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
+            val coroutineScope = rememberCoroutineScope()
+            UsersScreen(
+                isdarkTheme,
+                navController,
+                it.arguments?.getString("text"),
+                userTypeSelectedVM,
+                bottomSheetScaffoldState,
+                coroutineScope)
         }
 
     }
