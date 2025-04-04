@@ -94,6 +94,12 @@ fun PersonDateScreen(
             //  reutilizar la vista de UserList. o la de la pantalla de inicio. Agregar
             //  un item por cada valor string y agregar un icono particular para cada texto desde Firestore
             //  Si ha pagado la cuota tal vez  podria ir un icono de tilde de color llamativo. si no una cruz o algo en tono apagado
+            //  agregar telefono e icono, si tiene alguna enfermedad de base, si quiere adelagasar o
+            //  volumen. toma medicacion, cual y para que. Si tiene lesiones, cual. edad, altura, peso, objetivo. alguna vez entreno.
+            //  Cuantas clases le quedan y cuantas pago.
+
+
+            //TODO Agregar videos con ejercicios de muestra. segun su plan de usuario.
 
             DateUser(user.name)
             DateUser(user.typeId)
