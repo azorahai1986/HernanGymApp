@@ -1,18 +1,26 @@
 package com.hernan.gymapp.user_type_selected.presentation.ui.screen
 
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -30,12 +38,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hernan.gymapp.R
+import com.hernan.gymapp.user_type_selected.domain.model.UserTypeSelected
 import com.hernan.gymapp.user_type_selected.presentation.viewmodel.UserDetailViewModel
 import com.skydoves.landscapist.glide.GlideImage
 
@@ -43,13 +54,13 @@ import com.skydoves.landscapist.glide.GlideImage
 fun PersonDateScreen(
     userDetailViewModel: UserDetailViewModel = hiltViewModel()
 ) {
-    val bottomSheetHeight = with(LocalDensity.current) { 20.dp.toPx() }
+    val bottomSheetHeight = with(LocalDensity.current) { 10.dp.toPx() }
     val userState by userDetailViewModel.selectedUser.collectAsState()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.background),
+            .background(color = MaterialTheme.colorScheme.secondaryContainer),
         contentAlignment = Alignment.Center
     ) {
         var bottomSheetVisible by remember { mutableStateOf(true) }
@@ -67,56 +78,76 @@ fun PersonDateScreen(
         }
 
         userState?.let { user ->
-        Column(
-            Modifier
-                .graphicsLayer {
-                    translationY = animatableHeight.value
-                }
-                .fillMaxSize()
-                .padding(16.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.background,
-                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+            Log.d("USER SELECTED RESEIVER", user.toString())
+            Column(
+                Modifier
+                    .graphicsLayer {
+                        translationY = animatableHeight.value
+                    }
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                    )
+            ) {
+                GlideImage(
+                    imageModel = { user.userImage.ifBlank { R.drawable.logo_eze_solo_nombre } },
+                    modifier = Modifier
+                        .height(250.dp)
+                        .width(250.dp)
+                        .padding(15.dp)
+                        .clip(CircleShape)
+                        .align(Alignment.CenterHorizontally)
                 )
-        ) {
-            GlideImage(
-                imageModel = { user.userImage ?: R.drawable.logo_eze_solo_nombre }, // 🔥 Carga la imagen desde los recursos
-                modifier = Modifier
-                    .height(250.dp)
-                    .width(250.dp)
-                    .padding(15.dp)
-                    .clip(CircleShape)
-                    .align(Alignment.CenterHorizontally)
-            )
 
-           // DateUser(R.drawable.telephone_24, )
+                // 🟢 HACEMOS QUE LA LISTA SEA SCROLLEABLE
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 8.dp)
+                ) {
+                    item { InfoBox(user) }
+                    item { DateUser(user.weight, user.weightIcon) }
+                    item { DateUser(user.pay, user.payIcon) }
+                    item { DateUser(user.objetivo, user.objetivoIcon) }
+                    item { DateUser(user.edad, user.edadIcon) }
+                    item { DateUser(user.estadoSalud, user.estadoSaludIcon) }
+                    item { DateUser(user.classes, user.classesIcon) }
+
+                }
+            }
+
+            // DateUser(R.drawable.telephone_24, )
             // TODO hacer que los datos que lleguen a DateUser sean dinamicos. Tal vez
             //  reutilizar la vista de UserList. o la de la pantalla de inicio. Agregar
             //  un item por cada valor string y agregar un icono particular para cada texto desde Firestore
             //  Si ha pagado la cuota tal vez  podria ir un icono de tilde de color llamativo. si no una cruz o algo en tono apagado
             //  agregar telefono e icono, si tiene alguna enfermedad de base, si quiere adelagasar o
             //  volumen. toma medicacion, cual y para que. Si tiene lesiones, cual. edad, altura, peso, objetivo. alguna vez entreno.
+            //  Seria interezante agregar un sppiner con tiempos: ,as de un mes. menos de un mes. mas de un año. menos de un año,
+            //  intermitentemente etc
             //  Cuantas clases le quedan y cuantas pago.
 
 
             //TODO Agregar videos con ejercicios de muestra. segun su plan de usuario.
 
-            DateUser(user.name)
-            DateUser(user.typeId)
         }
-
-        } ?: Text(text = "Selecciona un usuario")
     }
 }
 
 @Composable
-private fun DateUser(text: String) {
+private fun DateUser(text: String, icon: String) {
 
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(60.dp)
-            .padding(vertical = 1.dp, horizontal = 15.dp),
+            .wrapContentSize()
+            .padding(vertical = 1.dp, horizontal = 15.dp)
+            .border(
+            width = 2.dp,
+                color = MaterialTheme.colorScheme.primary, // Cambiá este color como quieras
+                shape = RoundedCornerShape(16.dp)
+            ),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.background)
@@ -126,15 +157,17 @@ private fun DateUser(text: String) {
             .background(color = MaterialTheme.colorScheme.background)
             .align(CenterHorizontally),
         ) {
-            Image(
-                painter = painterResource(R.drawable.telephone_24),
-                contentDescription = null,
+            GlideImage(
+                imageModel = { icon ?: R.drawable.logo_eze_solo_nombre }, // Evita que image sea null
                 modifier = Modifier
-                    .height(50.dp)
-                    .width(100.dp)
+                    .size(54.dp)
+                    .clip(RectangleShape)
+                    .height(24.dp)
+                    .width(48.dp)
                     .padding(10.dp)
                     .align(alignment = Alignment.CenterVertically)
             )
+
             Text(text = text,
                 Modifier
                     .padding(5.dp)
@@ -145,4 +178,60 @@ private fun DateUser(text: String) {
 
     }
 
+}
+
+@Composable
+fun InfoBox(user: UserTypeSelected) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(18.dp)
+            .border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.primary, // Cambiá este color como quieras
+                shape = RoundedCornerShape(16.dp)
+            ),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
+    ) {
+        Column {
+            InfoRow("Nombre: ${user.name}", user.userImage)
+            InfoRow("Numero de telefono: ${user.phoneNumber}", user.phoneIcon)
+            InfoRow("Tipo de cliente: ${user.typeId}", user.typeUserIcon)
+
+        }
+    }
+
+}
+
+@Composable
+fun InfoRow(text: String, image: String) {
+    Row(
+        modifier = Modifier
+            .wrapContentSize()
+            .padding(12.dp)
+    ) {
+        GlideImage(
+            imageModel = { image },
+            modifier = Modifier
+                .size(48.dp)
+                .clip(AbsoluteRoundedCornerShape(16.dp))
+                .padding(start = 12.dp, bottom = 12.dp)
+                .align(alignment = Alignment.CenterVertically)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Text(
+            text,
+            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.surfaceTint,
+            modifier = Modifier
+                .padding(start = 12.dp, bottom = 12.dp)
+                .align(Alignment.CenterVertically)
+        )
+    }
 }
