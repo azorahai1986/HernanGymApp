@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -30,11 +31,16 @@ fun UsersTypeScreen(
     text: String?,
     clientViewModel: ClientViewModel
 ) {
-
     Scaffold(
         topBar = { ToolbarUsersType(text) },
+        containerColor = MaterialTheme.colorScheme.background, // Asegura el fondo del Scaffold
         content = { paddingValues ->
-            Box(modifier = Modifier.padding(paddingValues)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .background(MaterialTheme.colorScheme.background) // Fondo uniforme
+            ) {
                 GetData(clientViewModel, navController)
             }
         }
@@ -63,7 +69,9 @@ fun ColumnToListTypes(data: List<Client>, navController: NavHostController) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(5.dp),
         contentPadding = PaddingValues(vertical = 70.dp, horizontal = 16.dp),
-        modifier = Modifier.background(color = MaterialTheme.colorScheme.scrim)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.scrim)
 
         ) {
         items(data) { client ->

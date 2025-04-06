@@ -1,6 +1,5 @@
 package com.hernan.gymapp.user_type_selected.presentation.ui.screen
 
-import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.foundation.shape.CircleShape
@@ -41,7 +39,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -71,26 +68,22 @@ fun PersonDateScreen(
             animatableHeight.animateTo(
                 targetValue = targetHeight,
                 animationSpec = tween(
-                    durationMillis = 400,
+                    durationMillis = 600,
                     easing = LinearOutSlowInEasing
                 )
             )
         }
 
         userState?.let { user ->
-            Log.d("USER SELECTED RESEIVER", user.toString())
             Column(
-                Modifier
+                modifier = Modifier
+                    .fillMaxSize()
                     .graphicsLayer {
                         translationY = animatableHeight.value
                     }
-                    .fillMaxSize()
-                    .padding(16.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.background,
-                        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-                    )
-            ) {
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(26.dp)
+            ){
                 GlideImage(
                     imageModel = { user.userImage.ifBlank { R.drawable.logo_eze_solo_nombre } },
                     modifier = Modifier
@@ -98,23 +91,22 @@ fun PersonDateScreen(
                         .width(250.dp)
                         .padding(15.dp)
                         .clip(CircleShape)
-                        .align(Alignment.CenterHorizontally)
+                        .border(
+                            width = 4.dp, // Grosor del borde
+                            color = MaterialTheme.colorScheme.secondaryContainer, // Color del borde
+                            shape = CircleShape
+                        )
+                        .align(CenterHorizontally)
                 )
 
                 // 🟢 HACEMOS QUE LA LISTA SEA SCROLLEABLE
                 LazyColumn(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .weight(1f)
+                        .fillMaxWidth()
                         .padding(top = 8.dp)
                 ) {
                     item { InfoBox(user) }
-                    item { DateUser(user.weight, user.weightIcon) }
-                    item { DateUser(user.pay, user.payIcon) }
-                    item { DateUser(user.objetivo, user.objetivoIcon) }
-                    item { DateUser(user.edad, user.edadIcon) }
-                    item { DateUser(user.estadoSalud, user.estadoSaludIcon) }
-                    item { DateUser(user.classes, user.classesIcon) }
-
                 }
             }
 
@@ -194,16 +186,25 @@ fun InfoBox(user: UserTypeSelected) {
             ),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
     ) {
         Column {
             InfoRow("Nombre: ${user.name}", user.userImage)
-            InfoRow("Numero de telefono: ${user.phoneNumber}", user.phoneIcon)
+            InfoRow("Telefono: ${user.phoneNumber}", user.phoneIcon)
             InfoRow("Tipo de cliente: ${user.typeId}", user.typeUserIcon)
-
+            InfoRow("Clases restantes: ${user.classes}", user.classesIcon)
+            InfoRow("Peso: ${user.weight}kg", user.weightIcon)
+            InfoRow("Edad: ${user.edad}", user.edadIcon)
+            InfoRow("Metas: ${user.objetivo}", user.objetivoIcon)
+            InfoRow("Estado Salud: ${user.estadoSalud}", user.estadoSaludIcon)
+            InfoRow("Pagos: ${user.pay}", user.payIcon)
         }
+        /**
+         * Lista de info del cliente
+         * **/
+
     }
 
 }
@@ -213,14 +214,14 @@ fun InfoRow(text: String, image: String) {
     Row(
         modifier = Modifier
             .wrapContentSize()
-            .padding(12.dp)
+            .padding(8.dp)
     ) {
         GlideImage(
             imageModel = { image },
             modifier = Modifier
                 .size(48.dp)
                 .clip(AbsoluteRoundedCornerShape(16.dp))
-                .padding(start = 12.dp, bottom = 12.dp)
+                .padding(start = 2.dp, bottom = 2.dp)
                 .align(alignment = Alignment.CenterVertically)
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -230,7 +231,7 @@ fun InfoRow(text: String, image: String) {
             fontSize = 16.sp,
             color = MaterialTheme.colorScheme.surfaceTint,
             modifier = Modifier
-                .padding(start = 12.dp, bottom = 12.dp)
+                .padding(start = 2.dp, bottom = 2.dp)
                 .align(Alignment.CenterVertically)
         )
     }
