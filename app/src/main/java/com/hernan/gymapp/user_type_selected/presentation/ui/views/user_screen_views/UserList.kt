@@ -1,5 +1,6 @@
-package com.hernan.gymapp.user_type_selected.presentation.ui.views
+package com.hernan.gymapp.user_type_selected.presentation.ui.views.user_screen_views
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,7 +46,12 @@ fun UserList(
         modifier = Modifier
             .fillMaxWidth()
             .height(120.dp)
-            .padding(vertical = 10.dp, horizontal = 5.dp),
+            .padding(vertical = 10.dp, horizontal = 5.dp)
+            .border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.primary, // Cambiá este color como quieras
+                shape = RoundedCornerShape(16.dp)
+            ),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.background,

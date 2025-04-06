@@ -5,27 +5,38 @@ import com.hernan.gymapp.main_screen.data.model.FirstStateDto
 import com.hernan.gymapp.main_screen.domain.model.FirstState
 import com.hernan.gymapp.main_screen.domain.repository.FirstStateRepository
 import com.hernan.gymapp.common.state.ResourceFlow
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 
 class FirstStateRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : FirstStateRepository {
-    override fun getFirstState(): Flow<ResourceFlow<List<FirstState>>> = flow {
-        emit(ResourceFlow.Loading)
+    override fun getFirstState(): Flow<ResourceFlow<List<FirstState>>> = callbackFlow {
+        trySend(ResourceFlow.Loading)
 
-        val snapshot = firestore.collection("MainScreenColection").get().await()
-        val firstStateList = snapshot.documents.mapNotNull { it.toObject(FirstStateDto::class.java)?.toDomain() }
+        val listenerRegistration = firestore.collection("MainScreenColection")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    trySend(ResourceFlow.Error(error.message ?: "Error desconocido"))
+                    return@addSnapshotListener
+                }
+                if (snapshot != null) {
+                    val firstStateList = snapshot.documents.mapNotNull {
+                        it.toObject(FirstStateDto::class.java)?.toDomain()
+                    }
 
-        if (firstStateList.isNotEmpty()) {
-            emit(ResourceFlow.Success(firstStateList)) // ✅ Emitimos la lista completa
-        } else {
-            emit(ResourceFlow.Error("No hay estados disponibles"))
+                    if (firstStateList.isNotEmpty()) {
+                        trySend(ResourceFlow.Success(firstStateList))
+                    } else {
+                        trySend(ResourceFlow.Error("No hay estados disponibles"))
+                    }
+                }
+            }
+        awaitClose {
+            listenerRegistration.remove()
         }
-    }.catch { e ->
-        emit(ResourceFlow.Error(e.localizedMessage ?: "Error desconocido"))
-    }
+    }.distinctUntilChanged()
 }

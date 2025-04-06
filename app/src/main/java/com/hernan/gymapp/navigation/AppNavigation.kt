@@ -16,7 +16,7 @@ import com.hernan.gymapp.user_type.presentation.viewmodel.ClientViewModel
 import com.hernan.gymapp.main_screen.presentation.viewmodel.StateViewModel
 import com.hernan.gymapp.common.ui_app.SplashScreen
 import com.hernan.gymapp.common.ui_app.TurnsScreen
-import com.hernan.gymapp.user_type_selected.presentation.ui.screen.UsersScreen
+import com.hernan.gymapp.user_type_selected.presentation.ui.screens.screen.UsersScreen
 import com.hernan.gymapp.user_type.presentation.ui.screens.UsersTypeScreen
 import com.hernan.gymapp.user_type_selected.presentation.viewmodel.UserTypeSelectedVM
 

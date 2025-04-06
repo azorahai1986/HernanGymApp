@@ -1,4 +1,4 @@
-package com.hernan.gymapp.user_type_selected.presentation.ui.screen
+package com.hernan.gymapp.user_type_selected.presentation.ui.screens.screen
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hernan.gymapp.common.state.ResourceFlow
 import com.hernan.gymapp.common.ui_app.toolbar.ToolbarUsersType
+import com.hernan.gymapp.user_type_selected.presentation.ui.screens.botomsheet.PersonDateScreen
 import com.hernan.gymapp.user_type_selected.presentation.ui.views.user_screen_views.ColumnToUserList
 import com.hernan.gymapp.user_type_selected.presentation.viewmodel.UserTypeSelectedVM
 import kotlinx.coroutines.CoroutineScope

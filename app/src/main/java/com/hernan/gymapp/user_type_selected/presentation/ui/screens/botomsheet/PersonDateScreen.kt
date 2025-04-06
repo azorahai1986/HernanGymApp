@@ -1,4 +1,4 @@
-package com.hernan.gymapp.user_type_selected.presentation.ui.screen
+package com.hernan.gymapp.user_type_selected.presentation.ui.screens.botomsheet
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hernan.gymapp.R
 import com.hernan.gymapp.user_type_selected.domain.model.UserTypeSelected
+import com.hernan.gymapp.user_type_selected.presentation.ui.views.bottomsheet_view.InfoBox
 import com.hernan.gymapp.user_type_selected.presentation.viewmodel.UserDetailViewModel
 import com.skydoves.landscapist.glide.GlideImage
 
@@ -106,7 +107,9 @@ fun PersonDateScreen(
                         .fillMaxWidth()
                         .padding(top = 8.dp)
                 ) {
-                    item { InfoBox(user) }
+                    item { InfoBox(user, "PersonalData") }
+                    item { InfoBox(user, "Health") }
+                    item { InfoBox(user, "Payment") }
                 }
             }
 
@@ -125,114 +128,5 @@ fun PersonDateScreen(
             //TODO Agregar videos con ejercicios de muestra. segun su plan de usuario.
 
         }
-    }
-}
-
-@Composable
-private fun DateUser(text: String, icon: String) {
-
-    Card(
-        modifier = Modifier
-            .wrapContentSize()
-            .padding(vertical = 1.dp, horizontal = 15.dp)
-            .border(
-            width = 2.dp,
-                color = MaterialTheme.colorScheme.primary, // Cambiá este color como quieras
-                shape = RoundedCornerShape(16.dp)
-            ),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background)
-    ) {
-        Row(modifier = Modifier
-            .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.background)
-            .align(CenterHorizontally),
-        ) {
-            GlideImage(
-                imageModel = { icon ?: R.drawable.logo_eze_solo_nombre }, // Evita que image sea null
-                modifier = Modifier
-                    .size(54.dp)
-                    .clip(RectangleShape)
-                    .height(24.dp)
-                    .width(48.dp)
-                    .padding(10.dp)
-                    .align(alignment = Alignment.CenterVertically)
-            )
-
-            Text(text = text,
-                Modifier
-                    .padding(5.dp)
-                    .align(alignment = Alignment.CenterVertically)
-            )
-
-        }
-
-    }
-
-}
-
-@Composable
-fun InfoBox(user: UserTypeSelected) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(18.dp)
-            .border(
-                width = 2.dp,
-                color = MaterialTheme.colorScheme.primary, // Cambiá este color como quieras
-                shape = RoundedCornerShape(16.dp)
-            ),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
-    ) {
-        Column {
-            InfoRow("Nombre: ${user.name}", user.userImage)
-            InfoRow("Telefono: ${user.phoneNumber}", user.phoneIcon)
-            InfoRow("Tipo de cliente: ${user.typeId}", user.typeUserIcon)
-            InfoRow("Clases restantes: ${user.classes}", user.classesIcon)
-            InfoRow("Peso: ${user.weight}kg", user.weightIcon)
-            InfoRow("Edad: ${user.edad}", user.edadIcon)
-            InfoRow("Metas: ${user.objetivo}", user.objetivoIcon)
-            InfoRow("Estado Salud: ${user.estadoSalud}", user.estadoSaludIcon)
-            InfoRow("Pagos: ${user.pay}", user.payIcon)
-        }
-        /**
-         * Lista de info del cliente
-         * **/
-
-    }
-
-}
-
-@Composable
-fun InfoRow(text: String, image: String) {
-    Row(
-        modifier = Modifier
-            .wrapContentSize()
-            .padding(8.dp)
-    ) {
-        GlideImage(
-            imageModel = { image },
-            modifier = Modifier
-                .size(48.dp)
-                .clip(AbsoluteRoundedCornerShape(16.dp))
-                .padding(start = 2.dp, bottom = 2.dp)
-                .align(alignment = Alignment.CenterVertically)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Text(
-            text,
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.surfaceTint,
-            modifier = Modifier
-                .padding(start = 2.dp, bottom = 2.dp)
-                .align(Alignment.CenterVertically)
-        )
     }
 }

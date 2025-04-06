@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hernan.gymapp.user_type_selected.domain.model.UserTypeSelected
-import com.hernan.gymapp.user_type_selected.presentation.ui.views.UserList
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalMaterial3Api::class)
