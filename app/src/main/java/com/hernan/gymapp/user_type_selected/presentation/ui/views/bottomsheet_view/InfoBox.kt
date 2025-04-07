@@ -12,6 +12,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.hernan.gymapp.R
+import com.hernan.gymapp.common.Constants
 import com.hernan.gymapp.user_type_selected.domain.model.UserTypeSelected
 
 /**
@@ -36,29 +38,23 @@ fun InfoBox(user: UserTypeSelected, cliesnState: String) {
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
     ) {
 
-        // TODO Dentro de este when hay que emprolijar la condicion.
-        //  los PersonalData, Health y Payment. Deberian estar en la base de datos como  categorias.
-        //  Proximo paso a seguir: ver con el cliente sobre que valores se deberian sumar para filtrarlos luego
-
-
-        //TODO Va a ser mejor que los Iconos no vengan de firebase. que esten dentro de la app.
         user.apply {
             Column {
                 when(cliesnState) {
-                    "PersonalData" -> {
-                        InfoRow("Nombre: ${user.name}", user.userImage)
-                        InfoRow("Telefono: ${user.phoneNumber}", user.phoneIcon)
-                        InfoRow("Tipo de cliente: ${user.typeId}", user.typeUserIcon)
+                    Constants.personalData -> {
+                        InfoRow("Nombre: ${user.name}", R.drawable.user)
+                        InfoRow("Telefono: ${user.phoneNumber}", R.drawable.smartphone)
+                        InfoRow("Tipo de cliente: ${user.typeId}", R.drawable.avatar)
                     }
-                    "Health" -> {
-                        InfoRow("Peso: ${user.weight}kg", user.weightIcon)
-                        InfoRow("Edad: ${user.edad}", user.edadIcon)
-                        InfoRow("Metas: ${user.objetivo}", user.objetivoIcon)
-                        InfoRow("Estado Salud: ${user.estadoSalud}", user.estadoSaludIcon)
+                    Constants.health -> {
+                        InfoRow("Peso: ${user.weight}kg", R.drawable.perdida_de_peso)
+                        InfoRow("Edad: ${user.edad}", R.drawable.age_icon)
+                        InfoRow("Metas: ${user.objetivo}", R.drawable.objetivos_icon)
+                        InfoRow("Estado Salud: ${user.estadoSalud}", R.drawable.condicion_fisica_femenina)
                     }
-                    "Payment" -> {
-                        InfoRow("Clases restantes: ${user.classes}", user.classesIcon)
-                        InfoRowPayment("Estado de Pago:", user.pay, user.payIcon)
+                    Constants.payment -> {
+                        InfoRow("Clases restantes: ${user.classes}", R.drawable.classes_icon)
+                        InfoRowPayment("Estado de Pago:", user.pay, R.drawable.pay_icon)
                     }
 
                 }

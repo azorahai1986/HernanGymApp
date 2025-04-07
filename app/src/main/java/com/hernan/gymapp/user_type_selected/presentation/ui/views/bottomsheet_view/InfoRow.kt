@@ -21,7 +21,7 @@ import com.skydoves.landscapist.glide.GlideImage
  * Elementos dentro de la lista. Se muestran dentro de cada caja segun su categoria
  * **/
 @Composable
-fun InfoRow(text: String, image: String) {
+fun InfoRow(text: String, image: Int) {
     Row(
         modifier = Modifier
             .wrapContentSize()

@@ -22,7 +22,7 @@ import com.skydoves.landscapist.glide.GlideImage
  * Elementos dentro de la lista. Se muestran dentro de cada caja segun su categoria
  * **/
 @Composable
-fun InfoRowPayment(text:String, state: String, image: String) {
+fun InfoRowPayment(text:String, isPaid: Boolean, image: Int) {
     Row(
         modifier = Modifier
             .wrapContentSize()
@@ -47,7 +47,7 @@ fun InfoRowPayment(text:String, state: String, image: String) {
         )
         Spacer(modifier = Modifier.width(12.dp))
 
-        val stateImage = if (state == "true") R.drawable.tilde_ok else R.drawable.x_no
+        val stateImage = if (isPaid) R.drawable.tilde_ok else R.drawable.x_no
         GlideImage(
             imageModel = { stateImage },
             modifier = Modifier

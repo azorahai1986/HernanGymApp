@@ -41,7 +41,6 @@ fun UserList(
     userDetailViewModel: UserDetailViewModel = hiltViewModel()
 ) {
 
-    val bottomSheetHeight = with(LocalDensity.current) { 400.dp.toPx() }
     Card(
         modifier = Modifier
             .fillMaxWidth()
