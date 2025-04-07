@@ -16,7 +16,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.view.WindowInsetsControllerCompat
 import com.hernan.gymapp.R
 import com.hernan.gymapp.navigation.AppNavigation
-import com.hernan.gymapp.ui.theme.GymAppTheme
+import com.hernan.gymapp.common.ui.theme.GymAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 

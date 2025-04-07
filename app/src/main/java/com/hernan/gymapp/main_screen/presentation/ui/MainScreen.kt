@@ -86,13 +86,6 @@ private fun inflateList(data: List<FirstState>) {
             }
         }
 
-        /*item { Row() {
-            OptionsApp(MaterialTheme.colorScheme.onSecondary, R.string.turns)
-            OptionsApp(MaterialTheme.colorScheme.onSecondary, R.string.members)
-            OptionsApp(MaterialTheme.colorScheme.onSecondary, R.string.members)
-        } }*/
-
-
     }
 }
 @Composable
@@ -165,7 +158,7 @@ fun OptionsApp(backColor: Color, text: String) {
 private fun goToUserInfo(text: String) {
     when(text){
         "Turnos" -> navControl.navigate(route = Screens.TurnsScreen.routes + "/Turnos")
-        "Miembros del grupo" -> navControl.navigate(route = Screens.UsersScreen.routes + "/Miembros del grupo")
+        "Rutinas" -> navControl.navigate(route = Screens.RoutineScreen.routes + "/Rutinas")
         "Tipos de clientes" -> navControl.navigate(route = Screens.UsersTypeScreen.routes + "/Tipos de clientes")
     }
 

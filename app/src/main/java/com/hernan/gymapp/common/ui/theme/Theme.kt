@@ -1,4 +1,4 @@
-package com.hernan.gymapp.ui.theme
+package com.hernan.gymapp.common.ui.theme
 
 import android.app.Activity
 import android.os.Build

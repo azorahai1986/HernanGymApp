@@ -5,6 +5,9 @@ import com.hernan.gymapp.main_screen.data.repository.FirstStateRepositoryImpl
 import com.hernan.gymapp.user_type.domain.repository.ClientRepository
 import com.hernan.gymapp.main_screen.domain.repository.FirstStateRepository
 import com.hernan.gymapp.main_screen.domain.usecase.FirstStateUseCase
+import com.hernan.gymapp.routins_and_excercises.data.repository.RoutineRepositoryImpl
+import com.hernan.gymapp.routins_and_excercises.domain.repository.RoutineRepository
+import com.hernan.gymapp.routins_and_excercises.domain.usecase.RoutineUseCase
 import com.hernan.gymapp.user_type.domain.usecase.GetClientUsecase
 import com.hernan.gymapp.user_type.data.repository.ClientRepositoryImpl
 import com.hernan.gymapp.user_type_selected.data.repository.UserTypeSelectedRepositoryImpl
@@ -84,5 +87,26 @@ object UserTypeSelectedUseCaseModule {
     @Provides
     fun provideUseTypeSelectedUsecase(repository: UserTypeSelectedRepository): UserTypeSelectedUseCase {
         return UserTypeSelectedUseCase(repository)
+    }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object RoutineRepositoryModule {
+    @Provides
+    @Singleton
+    fun provideRoutineSelected(
+        firestore: FirebaseFirestore
+    ): RoutineRepository  {
+        return RoutineRepositoryImpl(firestore)
+    }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object RoutineUseCaseModule {
+    @Provides
+    fun provideRoutineUsecase(repository: RoutineRepository): RoutineUseCase {
+        return RoutineUseCase(repository)
     }
 }

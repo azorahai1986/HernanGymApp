@@ -1,4 +1,4 @@
-package com.hernan.gymapp.ui.theme
+package com.hernan.gymapp.common.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

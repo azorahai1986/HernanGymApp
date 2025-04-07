@@ -16,6 +16,8 @@ import com.hernan.gymapp.user_type.presentation.viewmodel.ClientViewModel
 import com.hernan.gymapp.main_screen.presentation.viewmodel.StateViewModel
 import com.hernan.gymapp.common.ui_app.SplashScreen
 import com.hernan.gymapp.common.ui_app.TurnsScreen
+import com.hernan.gymapp.routins_and_excercises.presentation.ui.screens.RoutineScreen
+import com.hernan.gymapp.routins_and_excercises.presentation.viewmodel.RoutineViewModel
 import com.hernan.gymapp.user_type_selected.presentation.ui.screens.screen.UsersScreen
 import com.hernan.gymapp.user_type.presentation.ui.screens.UsersTypeScreen
 import com.hernan.gymapp.user_type_selected.presentation.viewmodel.UserTypeSelectedVM
@@ -74,6 +76,18 @@ fun AppNavigation(){
                 userTypeSelectedVM,
                 bottomSheetScaffoldState,
                 coroutineScope)
+        }
+
+        composable(route = Screens.RoutineScreen.routes + "/{text}",
+            arguments = listOf(navArgument(name = "text") {
+                type = NavType.StringType
+            })){
+            val routineViewModel: RoutineViewModel= hiltViewModel()
+            RoutineScreen(
+                navController,
+                it.arguments?.getString("text"),
+                routineViewModel
+            )
         }
 
     }
