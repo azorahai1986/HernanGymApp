@@ -90,5 +90,17 @@ fun AppNavigation(){
             )
         }
 
+        composable(route = Screens.VideoPlayer.routes + "/{text}",
+            arguments = listOf(navArgument(name = "text") {
+                type = NavType.StringType
+            })){
+            val routineViewModel: RoutineViewModel= hiltViewModel()
+            RoutineScreen(
+                navController,
+                it.arguments?.getString("text"),
+                routineViewModel
+            )
+        }
+
     }
 }
