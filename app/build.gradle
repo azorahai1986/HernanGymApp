@@ -98,5 +98,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
     implementation "com.github.skydoves:landscapist-glide:2.2.10"
     // video con Youtube
-    implementation("io.github.ilyapavlovskii:youtubeplayer-compose:2024.02.25")
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0'
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
+
 }

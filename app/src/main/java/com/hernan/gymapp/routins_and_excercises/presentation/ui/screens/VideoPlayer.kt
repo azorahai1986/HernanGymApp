@@ -5,67 +5,81 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.hernan.gymapp.routins_and_excercises.domain.model.RoutinService
-import io.github.ilyapavlovskii.multiplatform.youtubeplayer.SimpleYouTubePlayerOptionsBuilder
-import io.github.ilyapavlovskii.multiplatform.youtubeplayer.YouTubePlayer
-import io.github.ilyapavlovskii.multiplatform.youtubeplayer.YouTubePlayerHostState
-import io.github.ilyapavlovskii.multiplatform.youtubeplayer.YouTubePlayerState
-import io.github.ilyapavlovskii.multiplatform.youtubeplayer.YouTubeVideoId
-import io.github.ilyapavlovskii.multiplatform.youtubeplayer.model.YouTubeExecCommand
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.LifecycleOwner
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 
 @Composable
-fun VideoPlayer(data: List<RoutinService>) {
+fun VideoPlayer(
+    videoId: String?,
+    videoName: String?
+) {
 
-    val hostStates = remember { data.map { YouTubePlayerHostState() } }
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
-        itemsIndexed(data) { index, item ->
-            val hostState = hostStates[index]
+        Text(
+            text = videoName ?: "",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(8.dp)
+        )
 
-            // Lógica para cargar el video cuando el player esté listo
-            if (hostState.currentState == YouTubePlayerState.Ready) {
-                LaunchedEffect(item.videoLink) {
-                    hostState.loadVideo(YouTubeVideoId(item.videoLink))
-                }
-            } else {
-                YouTubeExecCommand.SetLoop(true)
-            }
-
-
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Text(
-                    text = item.videoName,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(8.dp)
-                )
-
-                YouTubePlayer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp),
-                    hostState = hostState,
-                    options = SimpleYouTubePlayerOptionsBuilder.builder {
-                        autoplay(false)
-                        controls(true)
-                        fullscreen = true
-                    }
-                )
-            }
-        }
+        CustomYouTubePlayer(
+            videoId = videoId ?: "No se encuentra video",
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp),
+            repeatOnEnd = true // 👈 cambia a false si no querés repetirlo
+        )
     }
 }
+
+@Composable
+fun CustomYouTubePlayer(
+    videoId: String,
+    modifier: Modifier = Modifier,
+    repeatOnEnd: Boolean = true
+) {
+    val context = LocalContext.current
+
+    AndroidView(
+        modifier = modifier,
+        factory = { ctx ->
+            YouTubePlayerView(ctx).apply {
+                // Opcional: oculta sugerencias y modo de pantalla completa
+                enableAutomaticInitialization = false
+
+                val lifecycleOwner = context as? LifecycleOwner
+                lifecycleOwner?.lifecycle?.addObserver(this)
+
+                initialize(object : AbstractYouTubePlayerListener() {
+                    override fun onReady(youTubePlayer: YouTubePlayer) {
+                        youTubePlayer.loadVideo(videoId, 0f)
+                    }
+
+                    override fun onStateChange(
+                        youTubePlayer: YouTubePlayer,
+                        state: PlayerConstants.PlayerState
+                    ) {
+                        if (state == PlayerConstants.PlayerState.ENDED && repeatOnEnd) {
+                            youTubePlayer.loadVideo(videoId, 0f)
+                        }
+                    }
+                })
+            }
+        },
+        update = { } // No hace falta actualizar nada por ahora
+    )
+}
+

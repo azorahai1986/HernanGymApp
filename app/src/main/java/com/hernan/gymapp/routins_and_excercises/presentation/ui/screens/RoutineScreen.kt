@@ -49,7 +49,7 @@ fun RoutineScreen(
 
     when (val state = viewModelState.value) {
         is ResourceFlow.Loading -> Log.d("STATE", "CARGANDO")
-        is ResourceFlow.Success -> RoutineList(state.data, navController, text)
+        is ResourceFlow.Success -> RoutineList(state.data, navController, text, routineViewModel)
         is ResourceFlow.Error -> Log.d("STATE", "ESTADO ERROR ${state.message}")
     }
 
@@ -57,24 +57,36 @@ fun RoutineScreen(
 }
 
  @Composable
- fun RoutineList(data: List<RoutinService>, navController: NavHostController, text: String?) {
+ fun RoutineList(
+     data: List<RoutinService>,
+     navController: NavHostController,
+     text: String?,
+     routineViewModel: RoutineViewModel
+ ) {
      LazyColumn (modifier = Modifier
          .fillMaxWidth()
          .padding(16.dp)
      ){
          items(data) { video ->
-             InfoText(video.videoName, navController, text)
+             InfoText(video.videoName, navController, video.videoLink, routineViewModel)
          }
      }
  }
 
 @Composable
-fun InfoText(videoName: String, navController: NavHostController, text: String?) {
+fun InfoText(
+    videoName: String,
+    navController: NavHostController,
+    videoLink: String?,
+    routineViewModel: RoutineViewModel
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(12.dp)
-            .clickable { navController.navigate(Screens.VideoPlayer.routes + "/$text") }
+            .clickable {
+                navController.navigate(route = Screens.VideoPlayer.routes + "/$videoLink" + "/$videoName")
+            }
             .clip(RoundedCornerShape(16.dp)) // 🔁 PRIMERO: recorta la forma
             .background(MaterialTheme.colorScheme.surfaceBright) // 🎨 SEGUNDO: fondo ya recortado
             .border( // 🔲 TERCERO: borde externo
