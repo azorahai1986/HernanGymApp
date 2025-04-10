@@ -80,6 +80,13 @@ fun CustomYouTubePlayer(
             }
         },
         update = { } // No hace falta actualizar nada por ahora
+        /**
+         * TODO Pasos a seguir. Crear un QR para fichage del cliente.
+         *  deberá haber un QR en el dispositivo del administrador.
+         *  El cliente deberá escanear el QR del dispositivo del Administrador.
+         *  Al escanear se descontará una clase disponible de la base de datos.
+         *  habiendo consumido una clase el cliente.
+         * **/
     )
 }
 
