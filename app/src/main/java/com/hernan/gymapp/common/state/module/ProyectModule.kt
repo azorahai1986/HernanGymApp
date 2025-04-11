@@ -90,23 +90,3 @@ object UserTypeSelectedUseCaseModule {
     }
 }
 
-@Module
-@InstallIn(SingletonComponent::class)
-object RoutineRepositoryModule {
-    @Provides
-    @Singleton
-    fun provideRoutineSelected(
-        firestore: FirebaseFirestore
-    ): RoutineRepository  {
-        return RoutineRepositoryImpl(firestore)
-    }
-}
-
-@Module
-@InstallIn(SingletonComponent::class)
-object RoutineUseCaseModule {
-    @Provides
-    fun provideRoutineUsecase(repository: RoutineRepository): RoutineUseCase {
-        return RoutineUseCase(repository)
-    }
-}
