@@ -16,6 +16,9 @@ import com.hernan.gymapp.user_type.presentation.viewmodel.ClientViewModel
 import com.hernan.gymapp.main_screen.presentation.viewmodel.StateViewModel
 import com.hernan.gymapp.common.ui_app.SplashScreen
 import com.hernan.gymapp.common.ui_app.TurnsScreen
+import com.hernan.gymapp.qr_classes_control.QRScannerScreen
+import com.hernan.gymapp.qr_classes_control.QRScannerViewModel
+import com.hernan.gymapp.qr_classes_control.QrSuccessRegistration
 import com.hernan.gymapp.routins_and_excercises.presentation.ui.screens.RoutineScreen
 import com.hernan.gymapp.routins_and_excercises.presentation.ui.screens.VideoPlayer
 import com.hernan.gymapp.routins_and_excercises.presentation.viewmodel.RoutineViewModel
@@ -99,6 +102,23 @@ fun AppNavigation(){
             VideoPlayer(
                 it.arguments?.getString("text"),
                 it.arguments?.getString("text2"),
+            )
+        }
+
+        composable(route = Screens.QRScannerScreen.routes + "/{text}",
+            arguments = listOf(navArgument(name = "text") {
+                type = NavType.StringType
+            })){
+            val qrScannerViewModel: QRScannerViewModel = hiltViewModel()
+            QRScannerScreen(
+                navController,
+                qrScannerViewModel
+            )
+        }
+
+        composable(route = Screens.QrSuccessRegistration.routes){
+            QrSuccessRegistration(
+                navController
             )
         }
 

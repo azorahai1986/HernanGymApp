@@ -1,5 +1,7 @@
 package com.hernan.gymapp.main_screen.presentation.ui
 
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -122,7 +125,7 @@ fun MainToolbar() {
 
 @Composable
 fun OptionsApp(backColor: Color, text: String) {
-
+    val context = LocalContext.current
     Card(
         modifier = Modifier
             .height(86.dp)
@@ -139,7 +142,7 @@ fun OptionsApp(backColor: Color, text: String) {
         ),
         onClick = {
             // funcion para pasar a la siguiente pantalla
-            goToUserInfo(text)
+            goToUserInfo(text, context)
         }
     ) {
         Column(
@@ -155,12 +158,14 @@ fun OptionsApp(backColor: Color, text: String) {
 
 }
 
-private fun goToUserInfo(text: String) {
+private fun goToUserInfo(text: String, context: Context) {
     when(text){
         "Turnos" -> navControl.navigate(route = Screens.TurnsScreen.routes + "/Turnos")
         "Rutinas" -> navControl.navigate(route = Screens.RoutineScreen.routes + "/Rutinas")
         "Tipos de clientes" -> navControl.navigate(route = Screens.UsersTypeScreen.routes + "/Tipos de clientes")
+        "QR Scanner" -> navControl.navigate(route = Screens.QRScannerScreen.routes + "/\"QR Scanner\"")
     }
 
 }
+
 
