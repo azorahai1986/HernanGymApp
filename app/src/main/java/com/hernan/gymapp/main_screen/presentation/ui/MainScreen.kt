@@ -167,4 +167,15 @@ private fun goToUserInfo(text: String, context: Context) {
 
 }
 
+/**
+ * TODO feature/Generate_QR_and_QrName -> Por ahora crearlo en esta Screen
+ *   feature/create_Admin_info_Screen
+ *   feature/create_Admin_qr_acces
+ *   feature/create_admin_clients_screen
+ *   feature/create_admin_screen
+ *   feature/create_loggin_screen
+ *   feature/create_user_person_info
+ *
+ * **/
+
 
