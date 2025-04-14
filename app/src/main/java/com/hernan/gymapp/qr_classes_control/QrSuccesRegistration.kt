@@ -22,8 +22,13 @@ import com.hernan.gymapp.navigation.Screens
 import kotlinx.coroutines.delay
 
 @Composable
-fun QrSuccessRegistration(navController: NavHostController) {
-        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.ok_tilde_animation))
+fun QrSuccessRegistration(
+    navController: NavHostController,
+    isCorrectQr: Boolean
+) {
+
+    val qrStatus = if (isCorrectQr) R.raw.ok_tilde_animation else R.raw.error_qr_animation
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(qrStatus))
         val progress by animateLottieCompositionAsState(
             composition,
             iterations = 1, // solo una vez
@@ -62,5 +67,14 @@ fun QrSuccessRegistration(navController: NavHostController) {
      *  si volverá a la pantalla inicial o solo hacia atras.
      *
      *  TODO Agregar Pantalla de icono de error por si el QR no es el correcto
+     *
+     *  TODO El próximo paso deberia ser separar las capas de cliente y Administrador.
+     *   Comenzar con el Login de cada usuario. si Es Admin será un camino. sino el de cliente.
+     *
+     *   TODO Los QR generados se gestionan en la pagina -> https://es.qr-code-generator.com/ para un nuevo cliente
      * **/
 }
+
+/**
+ * esto exponerlo en una nueva opcion en MainScreen
+ * **/

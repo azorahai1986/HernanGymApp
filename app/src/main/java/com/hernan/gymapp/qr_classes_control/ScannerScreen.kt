@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
+import com.hernan.gymapp.common.Constants
 import com.hernan.gymapp.navigation.Screens
 
 @Composable
@@ -35,14 +36,12 @@ fun QRScannerScreen(navController: NavHostController, viewModel: QRScannerViewMo
 
     val qrCodeData by viewModel.qrCodeData.collectAsState()
     LaunchedEffect(qrCodeData) {
-        if (qrCodeData != "Escanea un código QR" &&
-            qrCodeData != "No se detectó ningún código" &&
-            !qrCodeData.startsWith("Error")
-        ) {
-            // Navegá a la pantalla que quieras, por ejemplo:
-            //navController.navigate("result_screen/${qrCodeData}")
-            navController.navigate(route = Screens.QrSuccessRegistration.routes)
-            // También podés hacer navController.popBackStack() si solo querés volver
+        if (qrCodeData != Constants.SCAN_QR &&
+            qrCodeData != Constants.QR_DOESNT_READ &&
+            !qrCodeData.startsWith(Constants.ERROR)
+        ){
+            val qrStatus = if (qrCodeData == Constants.CORRECT_OWNER_NAME) true else false
+            navController.navigate(route = Screens.QrSuccessRegistration.routes + "/$qrStatus")
         }
     }
     Column(

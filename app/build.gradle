@@ -111,6 +111,8 @@ dependencies {
     implementation 'com.google.guava:guava:33.3.0-android'
     implementation "androidx.compose.ui:ui:1.7.8"
     implementation "androidx.compose.ui:ui-tooling-preview:1.7.8"
+    // Generar un QR
+    implementation 'com.google.zxing:core:3.5.3'
     // Lottie para animaciones
     implementation "com.airbnb.android:lottie-compose:6.1.0"
 }

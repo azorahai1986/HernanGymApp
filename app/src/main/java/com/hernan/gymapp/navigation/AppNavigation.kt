@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -116,9 +117,20 @@ fun AppNavigation(){
             )
         }
 
-        composable(route = Screens.QrSuccessRegistration.routes){
+        composable(
+            route = Screens.QrSuccessRegistration.routes + "/{isCorrectQr}",
+            arguments = listOf(
+                navArgument(name = "isCorrectQr") {
+                    type = NavType.BoolType
+                    defaultValue = false
+                }
+            )
+        ) { it: NavBackStackEntry ->
+            val isCorrectQr = it.arguments?.getBoolean("isCorrectQr") ?: false
+
             QrSuccessRegistration(
-                navController
+                navController,
+                isCorrectQr
             )
         }
 
