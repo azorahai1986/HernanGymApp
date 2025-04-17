@@ -12,9 +12,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.hernan.gymapp.main_screen.presentation.ui.MainScreen
+import com.hernan.gymapp.main_screen.common.presentation.ui.screen.MainScreen
 import com.hernan.gymapp.user_type.presentation.viewmodel.ClientViewModel
-import com.hernan.gymapp.main_screen.presentation.viewmodel.StateViewModel
+import com.hernan.gymapp.main_screen.common.presentation.viewmodel.StateViewModel
 import com.hernan.gymapp.common.ui_app.SplashScreen
 import com.hernan.gymapp.common.ui_app.TurnsScreen
 import com.hernan.gymapp.qr_classes_control.QRScannerScreen

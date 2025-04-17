@@ -1,6 +1,7 @@
-package com.hernan.gymapp.main_screen.presentation.ui
+package com.hernan.gymapp.main_screen.common.presentation.ui.screen
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,38 +12,44 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.common.BitMatrix
 import com.hernan.gymapp.R
 import com.hernan.gymapp.common.state.ResourceFlow
-import com.hernan.gymapp.main_screen.domain.model.FirstState
-import com.hernan.gymapp.main_screen.presentation.viewmodel.StateViewModel
+import com.hernan.gymapp.main_screen.admin_qr.domain.model.QrAdminInfo
+import com.hernan.gymapp.main_screen.list_elements.domain.model.FirstState
+import com.hernan.gymapp.main_screen.common.presentation.viewmodel.StateViewModel
 import com.hernan.gymapp.navigation.Screens
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.set
+import com.hernan.gymapp.common.ui_app.toolbar.ToolbarUsersType
+import com.hernan.gymapp.main_screen.common.presentation.ui.views.QrImage
 
-private lateinit var navControl: NavHostController
 @Composable
 fun MainScreen(
     isdarkTheme: Boolean,
@@ -50,43 +57,51 @@ fun MainScreen(
     firstViewModel: StateViewModel,
 ) {
 
-    val firstStateViewModel by firstViewModel.firstState.collectAsState()
-    when (firstStateViewModel) {
-        is ResourceFlow.Loading -> {
-            Log.d("STATE", "CARGANDO")
-        }
-        is ResourceFlow.Success -> {
-            val data = (firstStateViewModel as ResourceFlow.Success).data
-            Log.d("STATE", "ESTADO $data")
-            inflateList(data)
-
-        }
-        is ResourceFlow.Error -> {
-            val message = (firstStateViewModel as ResourceFlow.Error).message
-            Log.d("STATE", "ESTADO ERROR $message")
-
-        }
-    }
-    navControl = navController
-
+    GetData(firstViewModel, navController)
 }
 
 @Composable
-private fun inflateList(data: List<FirstState>) {
+private fun GetData(firstViewModel: StateViewModel, navController: NavHostController) {
+    val firstState by firstViewModel.firstState.collectAsState()
+    val qrState by firstViewModel.qrCheckIn.collectAsState()
+
+    if (firstState is ResourceFlow.Success && qrState is ResourceFlow.Success) {
+        val stateData = (firstState as ResourceFlow.Success).data
+        val qrData = (qrState as ResourceFlow.Success).data
+
+        InflateList(stateData, navController, qrData)
+    }
+
+    if (firstState is ResourceFlow.Loading || qrState is ResourceFlow.Loading) {
+        Log.d("STATE", "CARGANDO")
+    }
+
+    if (firstState is ResourceFlow.Error) {
+        Log.d("STATE", "ERROR: ${(firstState as ResourceFlow.Error).message}")
+    }
+
+    if (qrState is ResourceFlow.Error) {
+        Log.d("STATE", "QR ERROR: ${(qrState as ResourceFlow.Error).message}")
+    }
+}
+@Composable
+private fun InflateList(
+    stateData: List<FirstState>,
+    navController: NavHostController,
+    qrData: List<QrAdminInfo>
+) {
     LazyColumn(horizontalAlignment =Alignment.CenterHorizontally
         ,modifier = Modifier
             .fillMaxSize()
             .padding(0.dp)
             .background(color = MaterialTheme.colorScheme.scrim)) {
 
-        item { MainToolbar() }
-        //if (isdarkTheme) item {  } else item { BackImage(R.drawable.logo_blanco) }
+        item { ToolbarUsersType("") }
         item { BackImage(R.drawable.logo_eze_solo_nombre) }
-        item {
-            data.forEach { label ->
-                OptionsApp(MaterialTheme.colorScheme.surfaceTint, label.name)
-            }
+        items(stateData) {label ->
+            OptionsApp(MaterialTheme.colorScheme.surfaceTint, label.name, navController)
         }
+        item { QrImage(qrData) }
 
     }
 }
@@ -105,25 +120,8 @@ fun BackImage(image: Int) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainToolbar() {
-
-    TopAppBar(
-        title = {
-            Text(
-                stringResource(id = R.string.app_name),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.surfaceTint
-            )
-        },
-        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.scrim)
-    )
-}
-
-@Composable
-fun OptionsApp(backColor: Color, text: String) {
+fun OptionsApp(backColor: Color, text: String, navController: NavHostController) {
     val context = LocalContext.current
     Card(
         modifier = Modifier
@@ -141,7 +139,7 @@ fun OptionsApp(backColor: Color, text: String) {
         ),
         onClick = {
             // funcion para pasar a la siguiente pantalla
-            goToUserInfo(text, context)
+            goToUserInfo(text, context, navController)
         }
     ) {
         Column(
@@ -151,13 +149,12 @@ fun OptionsApp(backColor: Color, text: String) {
             verticalArrangement = Arrangement.Center
         ) {
             Text(text = text, color = MaterialTheme.colorScheme.surfaceTint)
-            // Otros elementos de la tarjeta
         }
     }
 
 }
 
-private fun goToUserInfo(text: String, context: Context) {
+private fun goToUserInfo(text: String, context: Context, navControl: NavHostController) {
     when(text){
         "Turnos" -> navControl.navigate(route = Screens.TurnsScreen.routes + "/Turnos")
         "Rutinas" -> navControl.navigate(route = Screens.RoutineScreen.routes + "/Rutinas")
@@ -166,16 +163,5 @@ private fun goToUserInfo(text: String, context: Context) {
     }
 
 }
-
-/**
- * TODO feature/Generate_QR_and_QrName -> Por ahora crearlo en esta Screen
- *   feature/create_Admin_info_Screen
- *   feature/create_Admin_qr_acces
- *   feature/create_admin_clients_screen
- *   feature/create_admin_screen
- *   feature/create_loggin_screen
- *   feature/create_user_person_info
- *
- * **/
 
 

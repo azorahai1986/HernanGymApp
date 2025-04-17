@@ -1,9 +1,9 @@
-package com.hernan.gymapp.main_screen.data.repository
+package com.hernan.gymapp.main_screen.list_elements.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.hernan.gymapp.main_screen.data.model.FirstStateDto
-import com.hernan.gymapp.main_screen.domain.model.FirstState
-import com.hernan.gymapp.main_screen.domain.repository.FirstStateRepository
+import com.hernan.gymapp.main_screen.list_elements.data.model.FirstStateDto
+import com.hernan.gymapp.main_screen.list_elements.domain.model.FirstState
+import com.hernan.gymapp.main_screen.list_elements.domain.repository.FirstStateRepository
 import com.hernan.gymapp.common.state.ResourceFlow
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
