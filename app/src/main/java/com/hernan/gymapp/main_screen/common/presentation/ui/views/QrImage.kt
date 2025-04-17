@@ -59,7 +59,7 @@ fun generateQRCode(content: String, size: Int = 512): Bitmap {
 }
 
 /**
- * TODO feature/Generate_QR_and_QrName -> Por ahora crearlo en esta Screen
+ * TODO feature/Generate_QR_and_QrName -> Por ahora crearlo en esta Screen -: "Finalizado"
  *   feature/create_Admin_info_Screen
  *   feature/create_Admin_qr_acces
  *   feature/create_admin_clients_screen
