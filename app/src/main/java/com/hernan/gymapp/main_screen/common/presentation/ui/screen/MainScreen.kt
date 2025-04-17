@@ -1,7 +1,6 @@
 package com.hernan.gymapp.main_screen.common.presentation.ui.screen
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,29 +22,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.MultiFormatWriter
-import com.google.zxing.common.BitMatrix
 import com.hernan.gymapp.R
 import com.hernan.gymapp.common.state.ResourceFlow
 import com.hernan.gymapp.main_screen.admin_qr.domain.model.QrAdminInfo
 import com.hernan.gymapp.main_screen.list_elements.domain.model.FirstState
 import com.hernan.gymapp.main_screen.common.presentation.viewmodel.StateViewModel
 import com.hernan.gymapp.navigation.Screens
-import androidx.core.graphics.createBitmap
-import androidx.core.graphics.set
 import com.hernan.gymapp.common.ui_app.toolbar.ToolbarUsersType
 import com.hernan.gymapp.main_screen.common.presentation.ui.views.QrImage
 
