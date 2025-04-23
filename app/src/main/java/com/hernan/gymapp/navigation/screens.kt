@@ -11,4 +11,5 @@ sealed class Screens(val routes:String){
     data object VideoPlayer: Screens("VideoPlayer")
     data object QRScannerScreen: Screens("QRScannerScreen")
     data object QrSuccessRegistration: Screens("QrSuccessRegistration")
+    data object AccountScreen: Screens("AccountScreen")
 }

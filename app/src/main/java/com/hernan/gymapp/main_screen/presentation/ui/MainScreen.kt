@@ -122,6 +122,7 @@ fun MainToolbar() {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OptionsApp(backColor: Color, text: String) {
     val context = LocalContext.current
@@ -163,6 +164,7 @@ private fun goToUserInfo(text: String, context: Context) {
         "Rutinas" -> navControl.navigate(route = Screens.RoutineScreen.routes + "/Rutinas")
         "Tipos de clientes" -> navControl.navigate(route = Screens.UsersTypeScreen.routes + "/Tipos de clientes")
         "QR Scanner" -> navControl.navigate(route = Screens.QRScannerScreen.routes + "/\"QR Scanner\"")
+        "Registrate como usuario" -> navControl.navigate(route = Screens.AccountScreen.routes)
     }
 
 }
