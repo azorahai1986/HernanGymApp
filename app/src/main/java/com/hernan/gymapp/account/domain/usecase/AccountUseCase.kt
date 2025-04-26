@@ -9,6 +9,6 @@ import javax.inject.Inject
 class AccountUseCase @Inject constructor(
     private val createAccountRepository: CreateAccountRepository
 ) {
-    operator fun invoke(email: String, password: String): Flow<ResourceFlow<AccountData>> =
-        createAccountRepository.createAccount(email, password)
+    operator fun invoke(accountData: AccountData): Flow<ResourceFlow<AccountData>> =
+        createAccountRepository.createAccount(accountData)
 }

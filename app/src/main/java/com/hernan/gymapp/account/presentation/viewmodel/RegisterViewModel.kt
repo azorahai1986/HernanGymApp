@@ -2,7 +2,6 @@ package com.hernan.gymapp.account.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.AuthResult
 import com.hernan.gymapp.account.domain.model.AccountData
 import com.hernan.gymapp.account.domain.usecase.AccountUseCase
 import com.hernan.gymapp.common.state.ResourceFlow
@@ -21,11 +20,11 @@ class RegisterViewModel@Inject constructor(
     private val _state = MutableStateFlow<ResourceFlow<AccountData>>(ResourceFlow.Loading)
     val state: StateFlow<ResourceFlow<AccountData>> = _state
 
-    fun register(email: String, password: String) {
+    fun register(accountData: AccountData) {
 
         if (_state.value is ResourceFlow.Success) return
         viewModelScope.launch {
-            registerUserUseCase(email, password).collectLatest { result ->
+            registerUserUseCase(accountData).collectLatest { result ->
                 _state.value = result
             }
         }

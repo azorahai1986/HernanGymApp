@@ -6,5 +6,5 @@ import com.hernan.gymapp.common.state.ResourceFlow
 import kotlinx.coroutines.flow.Flow
 
 interface CreateAccountRepository {
-    fun createAccount(email: String, password: String): Flow<ResourceFlow<AccountData>>
+    fun createAccount(accountData: AccountData): Flow<ResourceFlow<AccountData>>
 }

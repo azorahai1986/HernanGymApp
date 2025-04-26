@@ -13,10 +13,10 @@ import javax.inject.Inject
 class CreateAccountRepositoryImpl @Inject constructor(
     private val authService: FirebaseAuthService
 ): CreateAccountRepository {
-    override fun createAccount(email: String, password: String): Flow<ResourceFlow<AccountData>> = flow {
+    override fun createAccount(accountData: AccountData): Flow<ResourceFlow<AccountData>> = flow {
         emit(ResourceFlow.Loading)
         try {
-            authService.register(email, password)
+            authService.register(accountData)
             val user = authService.getCurrentUser()
             if (user != null) {
                 val dto = AccountDataDto(name = user.displayName ?: "", email = user.email ?: "")
