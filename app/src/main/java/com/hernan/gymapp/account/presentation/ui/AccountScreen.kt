@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,29 +34,49 @@ import com.hernan.gymapp.common.ui_app.toolbar.ToolbarUsersType
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import com.hernan.gymapp.navigation.Screens
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun AccountScreen(
     navController: NavHostController,
     accountViewModel: RegisterViewModel
 ) {
-    val viewmodel = accountViewModel.state.collectAsState()
+    /*val viewmodel = accountViewModel.state.collectAsState()
 
     when (val state = viewmodel.value) {
         is ResourceFlow.Loading -> Log.d("STATE", "CARGANDO")
-        is ResourceFlow.Success -> Log.d("STATE ACCOUNT", state.data.toString())
+        is ResourceFlow.Success -> {
+            Log.d("STATE ACCOUNT", state.data.toString())
+            LaunchedEffect(Unit) {
+                navigateToAdittionalsDate(state.data, navController)
+            }
+        }
         is ResourceFlow.Error -> Log.d("STATE", "ESTADO ERROR ${state.message}")
-    }
+    }*/
 
-    ViewAccountScreen(accountViewModel)
+    ViewAccountScreen(accountViewModel, navController)
 
 }
 
+fun navigateToAdittionalsDate(data: AccountData, navControl: NavHostController) {
+    val safeName = URLEncoder.encode(data.name, StandardCharsets.UTF_8.name())
+    val safePhone = URLEncoder.encode(data.phoneNumber, StandardCharsets.UTF_8.toString())
+    val safeEmail = URLEncoder.encode(data.email, StandardCharsets.UTF_8.toString())
+
+    navControl.navigate(
+        route = Screens.AdditionalDateScreen.routes
+                + "/$safeName"
+                + "/$safePhone"
+                + "/$safeEmail"
+    )
+}
+
 @Composable
-fun ViewAccountScreen(accountViewModel: RegisterViewModel) {
+fun ViewAccountScreen(accountViewModel: RegisterViewModel, navController: NavHostController) {
 
     val focusManager = LocalFocusManager.current
 
@@ -70,8 +91,7 @@ fun ViewAccountScreen(accountViewModel: RegisterViewModel) {
     val passwordFocusRequester = remember { FocusRequester() }
 
     val isButtonEnabled = name.isNotBlank() && email.isNotBlank() && phoneNumber.isNotBlank() && password.isNotBlank()
-    val accountData = AccountData(name, email, "20/03/1986", phoneNumber, "X", password)
-
+    val accountData = AccountData(name, email, "", phoneNumber, "", password)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -153,8 +173,23 @@ fun ViewAccountScreen(accountViewModel: RegisterViewModel) {
 
             OutlinedButtonExample (
                 enabled = isButtonEnabled,
-                onClick = { accountViewModel.register(accountData) }
+                onClick = {
+                    Log.d("ACCOUNT DATA CONTENT", accountData.toString())
+                    accountViewModel.register(accountData) } // Aca se envia los datos del usuario al viewmodel y se obtienen arriba.
             )
+
+        val viewmodel = accountViewModel.state.collectAsState()
+
+        when (val state = viewmodel.value) {
+            is ResourceFlow.Loading -> Log.d("STATE", "CARGANDO")
+            is ResourceFlow.Success -> {
+                Log.d("STATE ACCOUNT", state.data.toString())
+                LaunchedEffect(Unit) {
+                    navigateToAdittionalsDate(accountData, navController)
+                }
+            }
+            is ResourceFlow.Error -> Log.d("STATE", "ESTADO ERROR ${state.message}")
+        }
 
     }
 
@@ -187,5 +222,9 @@ fun OutlinedButtonExample(enabled:Boolean ,onClick: () -> Unit) {
  * mensajes de error por falta de mayusculas o numeros.
  * en el mail. para asegurarme de que sea un mail correcto.
  * Eventualmente agregar verificacion de numero de telefono y mail. para estar seguro de que cada texto es correcto.
+ *
+ * Ya se agregó STORAGE a firebase. y se creó una carpeta para imagenes de perfil.
+ * TODO Guardar las imagenes en esta ruta: profileImages/{userId}/profile.jpg
+ *  (Donde {userId} es el uid de Firebase Authentication).
  * **/
 

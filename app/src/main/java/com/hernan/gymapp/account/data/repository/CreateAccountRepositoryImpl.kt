@@ -7,7 +7,6 @@ import com.hernan.gymapp.common.state.ResourceFlow
 import com.hernan.gymapp.user_type_selected.data.remote.FirebaseAuthService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class CreateAccountRepositoryImpl @Inject constructor(
