@@ -21,10 +21,10 @@ class AdditionalDateViewModel @Inject constructor(
 ):ViewModel() {
 
 
-    private val _userAcconted = MutableStateFlow<ResourceFlow<Unit>>(ResourceFlow.Loading)
+    private val _userAcconted = MutableStateFlow<ResourceFlow<Unit>>(ResourceFlow.Idle)
     val userAcconted: StateFlow<ResourceFlow<Unit>> = _userAcconted
 
-    private val _uploadImage = MutableStateFlow<ResourceFlow<String>>(ResourceFlow.Loading)
+    private val _uploadImage = MutableStateFlow<ResourceFlow<String>>(ResourceFlow.Idle)
     val uploadImage: StateFlow<ResourceFlow<String>> = _uploadImage
 
     fun setimageToStorage(userId: String?, imageBytes: ByteArray) {

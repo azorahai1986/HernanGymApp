@@ -17,7 +17,7 @@ class StorageRepositoryImpl @Inject constructor(
     ): Flow<ResourceFlow<String>> = flow {
         emit(ResourceFlow.Loading)
         try {
-            val ref = storage.reference.child("profileImages/$userId.jpg")
+            val ref = storage.reference.child("profileImages/$userId/$userId.jpg") // corregir para poider guardar mas de una imagen. cambiar por un tipo de imagen o algo asi
             ref.putBytes(imageBytes).await()
             val downloadUrl = ref.downloadUrl.await().toString()
             emit(ResourceFlow.Success(downloadUrl))

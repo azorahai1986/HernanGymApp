@@ -1,4 +1,4 @@
-package com.hernan.gymapp.account.presentation.ui
+package com.hernan.gymapp.account.presentation.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
@@ -37,8 +37,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.hernan.gymapp.navigation.Screens
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 @Composable
 fun AccountScreen(
@@ -63,15 +61,9 @@ fun AccountScreen(
 }
 
 fun navigateToAdittionalsDate(data: AccountData, navControl: NavHostController) {
-    val safeName = URLEncoder.encode(data.name, StandardCharsets.UTF_8.name())
-    val safePhone = URLEncoder.encode(data.phoneNumber, StandardCharsets.UTF_8.toString())
-    val safeEmail = URLEncoder.encode(data.email, StandardCharsets.UTF_8.toString())
 
     navControl.navigate(
-        route = Screens.AdditionalDateScreen.routes
-                + "/$safeName"
-                + "/$safePhone"
-                + "/$safeEmail"
+        route = Screens.AdditionalDateScreen.routes + "/${data.name}" + "/${data.phoneNumber}"
     )
 }
 
@@ -181,6 +173,7 @@ fun ViewAccountScreen(accountViewModel: RegisterViewModel, navController: NavHos
         val viewmodel = accountViewModel.state.collectAsState()
 
         when (val state = viewmodel.value) {
+            is ResourceFlow.Idle -> {}
             is ResourceFlow.Loading -> Log.d("STATE", "CARGANDO")
             is ResourceFlow.Success -> {
                 Log.d("STATE ACCOUNT", state.data.toString())

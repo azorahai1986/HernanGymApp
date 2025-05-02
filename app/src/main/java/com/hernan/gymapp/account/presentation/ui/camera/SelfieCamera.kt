@@ -38,7 +38,9 @@ import java.io.File
 @Composable
 fun PermissionCustomCamera() {
 
-
+    /**
+     * Aqui se solicitan los permisos
+     * **/
     RequestCameraPermission(
         onPermissionGranted = {
             Log.d("PERMISSION", "Permiso CONCEDIDO")
@@ -58,6 +60,10 @@ fun RequestCameraPermission(
     onPermissionGranted: () -> Unit,
     onPermissionDenied: () -> Unit
 ) {
+
+    /**
+     * aplico la logica para solicitar los permisos
+     * **/
     val context = LocalContext.current
 
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
@@ -74,7 +80,8 @@ fun RequestCameraPermission(
         when (PackageManager.PERMISSION_GRANTED) {
             ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) -> {
                 // Permiso ya concedido
-                onPermissionGranted()
+                onPermissionGranted() /**Recordar que el valor aqui aplicado se pasa por parasmetro al llamado de la misma.
+                 Todavia es raro esto**/
             }
             else -> {
                 // Pedir permiso
@@ -86,7 +93,6 @@ fun RequestCameraPermission(
 
 @Composable
 fun OpenCamera(
-    userId: String,
     onImageCaptured: (ByteArray) -> Unit,
     onError: (Exception) -> Unit
 ) {
@@ -152,7 +158,8 @@ fun OpenCamera(
                             buffer.get(bytes)
                             imageProxy.close()
 
-                            onImageCaptured(bytes) // acá ya tenés los bytes en memoria
+                            onImageCaptured(bytes) /** Todavia no se bien como se aplica la logica en estos casos.
+                             onImageCaptured pasa el valor al metodo quie la llama por medio de parametros**/
                         }
 
                         override fun onError(exception: ImageCaptureException) {
@@ -173,4 +180,90 @@ fun OpenCamera(
 private fun createTempFile(context: Context): File {
     val directory = context.cacheDir
     return File.createTempFile("temp_image", ".jpg", directory)
+}
+
+@Composable
+fun OpenNewCamera(
+    onImageCaptured: (ByteArray) -> Unit,
+    onError: (Exception) -> Unit
+) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val previewView = remember { PreviewView(context) }
+    var imageCapture: ImageCapture? by remember { mutableStateOf(null) }
+    val rotation = (context as? Activity)?.windowManager?.defaultDisplay?.rotation ?: Surface.ROTATION_0
+
+    // Guardamos el tempFile en un estado para accederlo después
+    var tempFile: File? by remember { mutableStateOf(null) }
+
+    LaunchedEffect(Unit) {
+        val cameraProvider = ProcessCameraProvider.getInstance(context).get()
+
+        val preview = Preview.Builder()
+            .setTargetRotation(rotation)
+            .build()
+            .apply {
+                surfaceProvider = previewView.surfaceProvider
+            }
+
+        imageCapture = ImageCapture.Builder()
+            .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+            .setTargetRotation(rotation)
+            .build()
+
+        val cameraSelector = CameraSelector.Builder()
+            .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
+            .build()
+
+        try {
+            cameraProvider.unbindAll()
+            cameraProvider.bindToLifecycle(
+                lifecycleOwner,
+                cameraSelector,
+                preview,
+                imageCapture
+            )
+        } catch (exc: Exception) {
+            onError(exc)
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        AndroidView(
+            factory = { previewView },
+            modifier = Modifier.fillMaxSize()
+        )
+
+        Button(
+            onClick = {
+                val file = createTempFile(context)
+                tempFile = file // lo guardamos para después
+                val outputOptions = ImageCapture.OutputFileOptions.Builder(file).build()
+
+                imageCapture?.takePicture(
+                    ContextCompat.getMainExecutor(context),
+                    object : ImageCapture.OnImageCapturedCallback() {
+                        override fun onCaptureSuccess(imageProxy: ImageProxy) {
+                            val buffer = imageProxy.planes[0].buffer
+                            val bytes = ByteArray(buffer.remaining())
+                            buffer.get(bytes)
+                            imageProxy.close()
+
+                            onImageCaptured(bytes) /** Todavia no se bien como se aplica la logica en estos casos.
+                            onImageCaptured pasa el valor al metodo quie la llama por medio de parametros**/
+                        }
+
+                        override fun onError(exception: ImageCaptureException) {
+                            onError(exception)
+                        }
+                    }
+                )
+            },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+        ) {
+            Text("Tomar Selfie")
+        }
+    }
 }

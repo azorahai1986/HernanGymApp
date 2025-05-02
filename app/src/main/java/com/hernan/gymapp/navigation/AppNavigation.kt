@@ -12,8 +12,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.hernan.gymapp.account.presentation.ui.AccountScreen
-import com.hernan.gymapp.account.presentation.ui.AdditionalDatesScreen
+import com.hernan.gymapp.account.presentation.ui.screens.AccountScreen
+import com.hernan.gymapp.account.presentation.ui.screens.AdditionalDatesScreen
 import com.hernan.gymapp.account.presentation.viewmodel.AdditionalDateViewModel
 import com.hernan.gymapp.account.presentation.viewmodel.RegisterViewModel
 import com.hernan.gymapp.main_screen.presentation.ui.MainScreen
@@ -143,11 +143,10 @@ fun AppNavigation(){
         }
 
         composable(
-            route = Screens.AdditionalDateScreen.routes + "/{name}/{phoneNumber}/{email}",
+            route = Screens.AdditionalDateScreen.routes + "/{name}/{phoneNumber}",
             arguments = listOf(
                 navArgument(name = "name") { type = NavType.StringType },
-                navArgument(name = "phoneNumber") { type = NavType.StringType },
-                navArgument(name = "email") { type = NavType.StringType },
+                navArgument(name = "phoneNumber") { type = NavType.StringType }
             )
         ) { backStackEntry ->
             val additionalDateViewModel: AdditionalDateViewModel = hiltViewModel()
@@ -155,8 +154,7 @@ fun AppNavigation(){
                     additionalDateViewModel = additionalDateViewModel,
                     navController = navController,
                     name = backStackEntry.arguments?.getString("name"),
-                    phoneNumber = backStackEntry.arguments?.getString("phoneNumber"),
-                    email = backStackEntry.arguments?.getString("email")
+                    phoneNumber = backStackEntry.arguments?.getString("phoneNumber")
                 )
             }
         }

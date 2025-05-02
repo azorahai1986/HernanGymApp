@@ -52,9 +52,8 @@ fun MainScreen(
 
     val firstStateViewModel by firstViewModel.firstState.collectAsState()
     when (firstStateViewModel) {
-        is ResourceFlow.Loading -> {
-            Log.d("STATE", "CARGANDO")
-        }
+        is ResourceFlow.Idle -> {}
+        is ResourceFlow.Loading -> { Log.d("STATE", "CARGANDO") }
         is ResourceFlow.Success -> {
             val data = (firstStateViewModel as ResourceFlow.Success).data
             Log.d("STATE", "ESTADO $data")

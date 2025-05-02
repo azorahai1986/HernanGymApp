@@ -58,6 +58,7 @@ fun GetData(clientViewModel: ClientViewModel, navController: NavHostController) 
     }
 
     when (val state = viewModelState.value) {
+        is ResourceFlow.Idle -> {}
         is ResourceFlow.Loading -> Log.d("STATE", "CARGANDO")
         is ResourceFlow.Success -> ColumnToListTypes(state.data, navController)
         is ResourceFlow.Error -> Log.d("STATE", "ESTADO ERROR ${state.message}")

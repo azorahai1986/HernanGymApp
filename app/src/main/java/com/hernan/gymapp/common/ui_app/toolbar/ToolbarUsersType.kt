@@ -1,9 +1,9 @@
 package com.hernan.gymapp.common.ui_app.toolbar
 
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.colorResource
@@ -14,7 +14,7 @@ import com.hernan.gymapp.R
 @Composable
 fun ToolbarUsersType(text: String?) {
 
-    TopAppBar(
+    CenterAlignedTopAppBar(
         title = {
             text?.let {
                 Text(text = it,
@@ -25,7 +25,8 @@ fun ToolbarUsersType(text: String?) {
             }
 
         },
-        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.scrim)
+        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+
 
     )
 
