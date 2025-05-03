@@ -27,7 +27,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 @Composable
 fun CameraPreview(viewModel: QRScannerViewModel) {
     val context = LocalContext.current
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    val lifecycleOwner = LocalLifecycleOwner.current
     val previewView = remember { PreviewView(context) }
 
     LaunchedEffect(Unit) {

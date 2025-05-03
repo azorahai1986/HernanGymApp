@@ -48,6 +48,7 @@ fun RoutineScreen(
     }
 
     when (val state = viewModelState.value) {
+        is ResourceFlow.Idle -> {}
         is ResourceFlow.Loading -> Log.d("STATE", "CARGANDO")
         is ResourceFlow.Success -> RoutineList(state.data, navController, text, routineViewModel)
         is ResourceFlow.Error -> Log.d("STATE", "ESTADO ERROR ${state.message}")

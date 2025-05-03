@@ -72,6 +72,7 @@ fun GetData(
     }
 
     when (val state = viewModelState.value) {
+        is ResourceFlow.Idle -> {}
         is ResourceFlow.Loading -> Log.d("STATE", "CARGANDO")
         is ResourceFlow.Success -> ColumnToUserList(
             state.data,

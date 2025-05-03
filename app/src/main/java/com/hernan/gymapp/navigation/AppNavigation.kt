@@ -13,6 +13,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.hernan.gymapp.main_screen.common.presentation.ui.screen.MainScreen
+import com.hernan.gymapp.account.presentation.ui.screens.AccountScreen
+import com.hernan.gymapp.account.presentation.ui.screens.AdditionalDatesScreen
+import com.hernan.gymapp.account.presentation.viewmodel.AdditionalDateViewModel
+import com.hernan.gymapp.account.presentation.viewmodel.RegisterViewModel
 import com.hernan.gymapp.user_type.presentation.viewmodel.ClientViewModel
 import com.hernan.gymapp.main_screen.common.presentation.viewmodel.StateViewModel
 import com.hernan.gymapp.common.ui_app.SplashScreen
@@ -99,7 +103,6 @@ fun AppNavigation(){
             arguments = listOf(navArgument(name = "text") {
                 type = NavType.StringType
             })){
-            val routineViewModel: RoutineViewModel= hiltViewModel()
             VideoPlayer(
                 it.arguments?.getString("text"),
                 it.arguments?.getString("text2"),
@@ -134,5 +137,27 @@ fun AppNavigation(){
             )
         }
 
-    }
+        composable(route = Screens.AccountScreen.routes){
+            val accountViewModel: RegisterViewModel = hiltViewModel()
+            AccountScreen(navController, accountViewModel)
+        }
+
+        composable(
+            route = Screens.AdditionalDateScreen.routes + "/{name}/{phoneNumber}",
+            arguments = listOf(
+                navArgument(name = "name") { type = NavType.StringType },
+                navArgument(name = "phoneNumber") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val additionalDateViewModel: AdditionalDateViewModel = hiltViewModel()
+                AdditionalDatesScreen(
+                    additionalDateViewModel = additionalDateViewModel,
+                    navController = navController,
+                    name = backStackEntry.arguments?.getString("name"),
+                    phoneNumber = backStackEntry.arguments?.getString("phoneNumber")
+                )
+            }
+        }
+
+
 }
