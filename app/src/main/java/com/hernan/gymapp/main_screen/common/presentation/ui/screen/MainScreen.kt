@@ -1,4 +1,4 @@
-package com.hernan.gymapp.main_screen.presentation.ui
+package com.hernan.gymapp.main_screen.common.presentation.ui.screen
 
 import android.content.Context
 import android.util.Log
