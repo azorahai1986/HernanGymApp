@@ -38,8 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hernan.gymapp.R
 import com.hernan.gymapp.common.state.ResourceFlow
-import com.hernan.gymapp.main_screen.domain.model.FirstState
-import com.hernan.gymapp.main_screen.presentation.viewmodel.StateViewModel
+import com.hernan.gymapp.main_screen.common.presentation.viewmodel.StateViewModel
+import com.hernan.gymapp.main_screen.list_elements.domain.model.FirstState
 import com.hernan.gymapp.navigation.Screens
 
 private lateinit var navControl: NavHostController

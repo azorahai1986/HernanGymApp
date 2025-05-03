@@ -1,7 +1,7 @@
 package com.hernan.gymapp.main_screen.admin_qr.domain.usecase
 
 import com.hernan.gymapp.main_screen.admin_qr.domain.repository.QrAdminRepository
-import jakarta.inject.Inject
+import javax.inject.Inject
 
 class QrAdminUseCase @Inject constructor(
     private val qrAdminRepository: QrAdminRepository
