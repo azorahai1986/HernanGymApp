@@ -359,3 +359,9 @@ fun CentredText(text: String, size: TextUnit) {
         color = Color.White
     )
 }
+
+/**
+ * TODO Corregir este archivo. separar lo que se pueda en diferentes archivos. emprolijar el package del proyecto.
+ * TODO crear los spinner para el genero, para el estado de salud, y objetivos.
+ * TODO crear validaciones para los editText
+ * **/
