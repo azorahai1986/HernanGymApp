@@ -1,10 +1,5 @@
 package com.hernan.gymapp.account.presentation.ui.screens
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
-import android.media.ExifInterface
 import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,9 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -36,7 +29,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -51,15 +43,16 @@ import com.hernan.gymapp.account.data.model.AdditionalDateDto
 import com.hernan.gymapp.account.presentation.ui.camera.OpenCamera
 import com.hernan.gymapp.account.presentation.ui.camera.PermissionCustomCamera
 import com.hernan.gymapp.account.presentation.ui.camera.RequestCameraPermission
-import com.hernan.gymapp.account.presentation.ui.views.LoadinAnimation
+import com.hernan.gymapp.common.ui_app.animations.LoadinAnimation
 import com.hernan.gymapp.account.presentation.viewmodel.AdditionalDateViewModel
 import com.hernan.gymapp.common.Constants
 import com.hernan.gymapp.common.state.ResourceFlow
+import com.hernan.gymapp.common.ui_app.buttons.OutlinedRoundedButton
+import com.hernan.gymapp.common.ui_app.text_views.CentredTextField
 import com.hernan.gymapp.common.ui_app.text_views.EditTextCustom
 import com.hernan.gymapp.common.ui_app.toolbar.ToolbarUsersType
 import com.hernan.gymapp.navigation.Screens
 import com.skydoves.landscapist.glide.GlideImage
-import java.io.ByteArrayInputStream
 
 @Composable
 fun AdditionalDatesScreen(
@@ -169,14 +162,13 @@ fun ShowView(
 
         if (!isSuccessImage) {
             item { ToolbarUsersType("Información adicional para $name") }
-            item { CentredText("Es momento de tomarte una selfie. O si lo prefieres elegí una foto desde tu galería", 18.sp)
+            item { CentredTextField("Es momento de tomarte una selfie. O si lo prefieres elegí una foto desde tu galería", 18.sp)
                 Spacer(modifier = Modifier.height(16.dp)) }
         }
 
         if (!isImageLoading) {
             item { UserImage(
                 imageFromsStorage = profilePhoto,
-                userId = userId,
                 onImageCaptured = { imageBytes ->
 
                     capturedImage = imageBytes
@@ -189,9 +181,9 @@ fun ShowView(
 
         item {
             if (isImageLoading) {
-                CentredText("Cargando Imagen. Por favor espera...", 12.sp)
+                CentredTextField("Cargando Imagen. Por favor espera...", 12.sp)
             } else {
-                CentredText("Elige una imagen de la galería", 12.sp)
+                CentredTextField("Elige una imagen de la galería", 12.sp)
             }
         }
 
@@ -247,7 +239,7 @@ fun ShowView(
             ) }
 
 
-            item { OutlinedButton(
+            item { OutlinedRoundedButton(
                 enabled = isButtonEnabled,
                 onClick = {
                     additionalDateViewModel.saveUser(
@@ -255,7 +247,8 @@ fun ShowView(
                         documentId = userId ?: "No User",
                         user = dataUserAccounted)
 
-                }
+                },
+                text = "Registrarse"
             ) }
         }
     }
@@ -264,7 +257,6 @@ fun ShowView(
 @Composable
 fun UserImage(
     imageFromsStorage: String,
-    userId: String?,
     onImageCaptured: (ByteArray) -> Unit
 )
 {
@@ -324,44 +316,7 @@ fun UserImage(
 
 
 
-@Composable
-fun OutlinedButton(enabled:Boolean ,onClick: () -> Unit) {
-    OutlinedButton(
-        onClick = {
-            onClick()},
-        enabled = enabled,
-        modifier = Modifier
-            .height(48.dp)
-            .fillMaxWidth()
-            .padding(horizontal = 55.dp),
-        colors = ButtonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-            contentColor = Color.White,
-            disabledContentColor = MaterialTheme.colorScheme.surfaceContainerLow,
-            disabledContainerColor = MaterialTheme.colorScheme.background
-        )
-    ) {
-        Text("Registrarse")
-    }
-}
-
-@Composable
-fun CentredText(text: String, size: TextUnit) {
-    Spacer(modifier = Modifier.height(48.dp))
-
-    Text(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp),
-        text = text,
-        fontSize = size,
-        textAlign = TextAlign.Center,
-        color = Color.White
-    )
-}
-
 /**
- * TODO Corregir este archivo. separar lo que se pueda en diferentes archivos. emprolijar el package del proyecto.
  * TODO crear los spinner para el genero, para el estado de salud, y objetivos.
  * TODO crear validaciones para los editText
  * **/

@@ -36,6 +36,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import com.hernan.gymapp.common.ui_app.buttons.OutlinedRoundedButton
 import com.hernan.gymapp.navigation.Screens
 
 @Composable
@@ -163,12 +164,13 @@ fun ViewAccountScreen(accountViewModel: RegisterViewModel, navController: NavHos
             Spacer(modifier =
                 Modifier.weight(1f))
 
-            OutlinedButtonExample (
-                enabled = isButtonEnabled,
-                onClick = {
-                    Log.d("ACCOUNT DATA CONTENT", accountData.toString())
-                    accountViewModel.register(accountData) } // Aca se envia los datos del usuario al viewmodel y se obtienen arriba.
-            )
+        OutlinedRoundedButton (
+            enabled = isButtonEnabled,
+            onClick = {
+                Log.d("ACCOUNT DATA CONTENT", accountData.toString())
+                accountViewModel.register(accountData) },// Aca se envia los datos del usuario al viewmodel y se obtienen arriba.
+            text = "Continuar"
+        )
 
         val viewmodel = accountViewModel.state.collectAsState()
 
@@ -187,27 +189,6 @@ fun ViewAccountScreen(accountViewModel: RegisterViewModel, navController: NavHos
     }
 
 
-}
-
-@Composable
-fun OutlinedButtonExample(enabled:Boolean ,onClick: () -> Unit) {
-    OutlinedButton(
-        onClick = {
-            onClick()},
-        enabled = enabled,
-        modifier = Modifier
-            .height(48.dp)
-            .fillMaxWidth()
-            .padding(horizontal = 55.dp),
-        colors = ButtonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-            contentColor = Color.White,
-            disabledContentColor = MaterialTheme.colorScheme.surfaceContainerLow,
-            disabledContainerColor = MaterialTheme.colorScheme.background
-        )
-    ) {
-        Text("Registrarse")
-    }
 }
 
 /**

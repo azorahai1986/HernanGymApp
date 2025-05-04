@@ -1,4 +1,4 @@
-package com.hernan.gymapp.account.presentation.ui.views
+package com.hernan.gymapp.common.ui_app.animations
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
