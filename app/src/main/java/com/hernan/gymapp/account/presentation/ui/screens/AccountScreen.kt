@@ -4,16 +4,10 @@ import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,9 +27,12 @@ import com.hernan.gymapp.common.ui_app.text_views.EditTextCustom
 import com.hernan.gymapp.common.ui_app.toolbar.ToolbarUsersType
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.hernan.gymapp.account.presentation.viewmodel.PhoneNumberViewModel
+import com.hernan.gymapp.account.presentation.viewmodel.VerifyEmailViewModel
+import com.hernan.gymapp.account.presentation.viewmodel.VerifyPasswordViewModel
 import com.hernan.gymapp.common.ui_app.buttons.OutlinedRoundedButton
 import com.hernan.gymapp.navigation.Screens
 
@@ -44,25 +41,12 @@ fun AccountScreen(
     navController: NavHostController,
     accountViewModel: RegisterViewModel
 ) {
-    /*val viewmodel = accountViewModel.state.collectAsState()
-
-    when (val state = viewmodel.value) {
-        is ResourceFlow.Loading -> Log.d("STATE", "CARGANDO")
-        is ResourceFlow.Success -> {
-            Log.d("STATE ACCOUNT", state.data.toString())
-            LaunchedEffect(Unit) {
-                navigateToAdittionalsDate(state.data, navController)
-            }
-        }
-        is ResourceFlow.Error -> Log.d("STATE", "ESTADO ERROR ${state.message}")
-    }*/
 
     ViewAccountScreen(accountViewModel, navController)
 
 }
 
 fun navigateToAdittionalsDate(data: AccountData, navControl: NavHostController) {
-
     navControl.navigate(
         route = Screens.AdditionalDateScreen.routes + "/${data.name}" + "/${data.phoneNumber}"
     )
@@ -71,24 +55,40 @@ fun navigateToAdittionalsDate(data: AccountData, navControl: NavHostController) 
 @Composable
 fun ViewAccountScreen(accountViewModel: RegisterViewModel, navController: NavHostController) {
 
-    val focusManager = LocalFocusManager.current
-
     var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var phoneNumber by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val emailViewModel: VerifyEmailViewModel = viewModel<VerifyEmailViewModel>()
+    val phoneNumberViewModel: PhoneNumberViewModel = viewModel<PhoneNumberViewModel>()
+    val passwordViewModel: VerifyPasswordViewModel = viewModel<VerifyPasswordViewModel>()
 
+    val focusManager = LocalFocusManager.current
     val nameFocusRequester = remember { FocusRequester() }
     val emailFocusRequester = remember { FocusRequester() }
     val phoneFocusRequester = remember { FocusRequester() }
     val passwordFocusRequester = remember { FocusRequester() }
 
-    val isButtonEnabled = name.isNotBlank() && email.isNotBlank() && phoneNumber.isNotBlank() && password.isNotBlank()
-    val accountData = AccountData(name, email, "", phoneNumber, "", password)
+    // Validar que ningun campo queda vacio y con errores
+    val isButtonEnabled = name.isNotBlank()
+            && emailViewModel.email.isNotBlank()
+            && phoneNumberViewModel.phoneNumber.isNotBlank()
+            && passwordViewModel.password.isNotBlank()
+            && !emailViewModel.emailHasErrors
+            && !phoneNumberViewModel.phoneNumberHasErrors
+            && !passwordViewModel.passwordHasErrors
+
+    // guardo los valores en accountData
+    val accountData = AccountData(
+        name,
+        emailViewModel.email,
+        "",
+        phoneNumberViewModel.phoneNumber,
+        "",
+        passwordViewModel.password
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 24.dp)
+            .padding(vertical = 16.dp)
             .imePadding()
     ) {
 
@@ -107,13 +107,14 @@ fun ViewAccountScreen(accountViewModel: RegisterViewModel, navController: NavHos
                 keyboardActions = KeyboardActions(
                     onNext = { emailFocusRequester.requestFocus() }
                 ),
-                modifier = Modifier.focusRequester(nameFocusRequester)
+                modifier = Modifier.focusRequester(nameFocusRequester),
+                validatorHasErrors = false
 
             )
 
             EditTextCustom(
-                text = email,
-                onValueChange = {email = it},
+                text = emailViewModel.email,
+                onValueChange = { input -> emailViewModel.updateEmail(input) },
                 textType = Constants.EMAIL,
                 elevationText = "Ingresa un email válido",
                 hint = "",
@@ -124,14 +125,16 @@ fun ViewAccountScreen(accountViewModel: RegisterViewModel, navController: NavHos
                 keyboardActions = KeyboardActions(
                     onNext = { phoneFocusRequester.requestFocus() }
                 ),
-                modifier = Modifier.focusRequester(emailFocusRequester)
+                modifier = Modifier
+                    .focusRequester(emailFocusRequester),
+                validatorHasErrors = emailViewModel.emailHasErrors
 
              )
 
             EditTextCustom(
-                text = phoneNumber,
-                onValueChange = {phoneNumber = it},
-                textType = Constants.SIMPLE_TEXT,
+                text = phoneNumberViewModel.phoneNumber,
+                onValueChange = {input -> phoneNumberViewModel.updatePhoneNumber(input) },
+                textType = Constants.PHONE_NUMBER,
                 elevationText = "número telefónico",
                 hint = "",
                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -141,13 +144,14 @@ fun ViewAccountScreen(accountViewModel: RegisterViewModel, navController: NavHos
                 keyboardActions = KeyboardActions(
                     onNext = { passwordFocusRequester.requestFocus() }
                 ),
-                modifier = Modifier.focusRequester(phoneFocusRequester)
+                modifier = Modifier.focusRequester(phoneFocusRequester),
+                validatorHasErrors = phoneNumberViewModel.phoneNumberHasErrors
 
             )
 
             EditTextCustom(
-                text = password,
-                onValueChange = {password = it},
+                text = passwordViewModel.password,
+                onValueChange = {input -> passwordViewModel.updatePassword(input) },
                 textType = Constants.PASSWORD,
                 elevationText = "Contraseña",
                 hint = "",
@@ -158,7 +162,8 @@ fun ViewAccountScreen(accountViewModel: RegisterViewModel, navController: NavHos
                 keyboardActions = KeyboardActions(
                     onDone = { focusManager.clearFocus() }
                 ),
-                modifier = Modifier.focusRequester(passwordFocusRequester)
+                modifier = Modifier.focusRequester(passwordFocusRequester),
+                validatorHasErrors = passwordViewModel.passwordHasErrors
             )
 
             Spacer(modifier =

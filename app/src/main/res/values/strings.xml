@@ -22,4 +22,6 @@
     <string name="bottom_navigation_home">Home</string>
     <string name="bottom_navigation_profile">Profile</string>
     <string name="placeholder_search">Search</string>
+    <string name="info_for_selfies">Es momento de tomarte una selfie. O si lo prefieres elegí una foto desde tu galería</string>
+    <string name="info_for_toolbar">Información adicional para %1$s</string>
 </resources>

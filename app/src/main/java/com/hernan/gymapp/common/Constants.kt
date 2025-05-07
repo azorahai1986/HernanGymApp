@@ -11,6 +11,7 @@ object Constants {
     const val PASSWORD = "Password"
     const val SIMPLE_TEXT = "SimpleText"
     const val CORRECT_OWNER_NAME = "Ezequiel Tapia. 35907600"
+    const val PHONE_NUMBER = "Ezequiel Tapia. 35907600"
 
     const val CAMERA_PERMISSION_REQUEST_CODE = 100
     //Collecciones de Firebase Firestore

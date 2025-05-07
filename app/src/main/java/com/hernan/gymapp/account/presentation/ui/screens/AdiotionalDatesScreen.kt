@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
@@ -16,7 +15,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,12 +26,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -112,7 +108,6 @@ fun ShowView(
     isImageLoading: Boolean,
     navController: NavHostController,
 ) {
-
     val focusManager = LocalFocusManager.current
     var capturedImage by remember { mutableStateOf<ByteArray?>(null) }
     var age by remember { mutableStateOf("") }
@@ -161,8 +156,8 @@ fun ShowView(
     ) {
 
         if (!isSuccessImage) {
-            item { ToolbarUsersType("Información adicional para $name") }
-            item { CentredTextField("Es momento de tomarte una selfie. O si lo prefieres elegí una foto desde tu galería", 18.sp)
+            item { ToolbarUsersType(stringResource(R.string.info_for_toolbar, name ?: "Usuario")) }
+            item { CentredTextField(stringResource(R.string.info_for_selfies), 18.sp)
                 Spacer(modifier = Modifier.height(16.dp)) }
         }
 
@@ -201,7 +196,9 @@ fun ShowView(
                 keyboardActions = KeyboardActions(
                     onNext = { healthStatusFocusRequester.requestFocus() }
                 ),
-                modifier = Modifier.focusRequester(ageFocusRequester)
+                modifier = Modifier
+                    .focusRequester(ageFocusRequester),
+                validatorHasErrors = false
 
             ) }
 
@@ -218,8 +215,8 @@ fun ShowView(
                 keyboardActions = KeyboardActions(
                     onNext = { bodyWeightFocusRequester.requestFocus() }
                 ),
-                modifier = Modifier.focusRequester(healthStatusFocusRequester)
-
+                modifier = Modifier.focusRequester(healthStatusFocusRequester),
+                validatorHasErrors = false
             ) }
 
             item { EditTextCustom(
@@ -235,7 +232,8 @@ fun ShowView(
                 keyboardActions = KeyboardActions(
                     onDone = { focusManager.clearFocus() }
                 ),
-                modifier = Modifier.focusRequester(bodyWeightFocusRequester)
+                modifier = Modifier.focusRequester(bodyWeightFocusRequester),
+                validatorHasErrors = false
             ) }
 
 

@@ -2,7 +2,6 @@ package com.hernan.gymapp.common.ui_app.text_views
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -11,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,10 +42,12 @@ fun EditTextCustom(text:String,
                    hint: String,
                    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
                    keyboardActions: KeyboardActions = KeyboardActions.Default,
-                   modifier: Modifier = Modifier
+                   modifier: Modifier = Modifier,
+                   validatorHasErrors: Boolean
 ) {
 
     var isPasswordVisible by remember { mutableStateOf(false) }
+    var errorText by remember { mutableStateOf("") }
 
     OutlinedTextField(
         value = text,
@@ -53,7 +55,6 @@ fun EditTextCustom(text:String,
         label = { Text(elevationText) },
         placeholder = { Text(hint) },
         modifier = modifier
-            .height(86.dp)
             .fillMaxWidth()
             .padding(vertical = 10.dp, horizontal = 55.dp)
             .background(color = MaterialTheme.colorScheme.scrim),
@@ -64,6 +65,7 @@ fun EditTextCustom(text:String,
             when(textType) { // Seleccionar un icono para el lado izquierdo de la vista
                 Constants.SIMPLE_TEXT -> Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "")
                 Constants.EMAIL -> Icon(imageVector = Icons.Default.Email, contentDescription = "")
+                Constants.PHONE_NUMBER -> Icon(imageVector = Icons.Default.PhoneAndroid, contentDescription = "")
                 Constants.PASSWORD -> Icon(imageVector = Icons.Default.Password, contentDescription = "")
 
             }
@@ -72,6 +74,7 @@ fun EditTextCustom(text:String,
         trailingIcon = {
             when(textType) {
                 Constants.SIMPLE_TEXT ->{isPasswordVisible = true}
+                Constants.PHONE_NUMBER ->{isPasswordVisible = true}
                 Constants.EMAIL -> {isPasswordVisible = true}
                 Constants.PASSWORD -> {
                     val icon = if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility
@@ -84,6 +87,17 @@ fun EditTextCustom(text:String,
 
         },
         isError = false,
+        supportingText = {
+            if (validatorHasErrors) {
+                when(textType) {
+                    Constants.PHONE_NUMBER ->  errorText = "Número demasiado largo..."
+                    Constants.EMAIL ->  errorText = "Formato incorrecto de email"
+                    Constants.PASSWORD ->  errorText = "Formato de contraseña incorrecto"
+                }
+                Text(text = errorText,
+                    color = MaterialTheme.colorScheme.error)
+            }
+        },
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
         singleLine = true,
