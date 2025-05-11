@@ -1,6 +1,11 @@
 package com.hernan.gymapp.account.presentation.ui.screens
 
+import android.content.Context
+import android.content.pm.PackageManager
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -26,12 +31,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseAuth
 import com.hernan.gymapp.R
@@ -39,6 +46,7 @@ import com.hernan.gymapp.account.data.model.AdditionalDateDto
 import com.hernan.gymapp.account.presentation.ui.camera.OpenCamera
 import com.hernan.gymapp.account.presentation.ui.camera.PermissionCustomCamera
 import com.hernan.gymapp.account.presentation.ui.camera.RequestCameraPermission
+import com.hernan.gymapp.account.presentation.ui.views.radiobutton.CustomRadioButton
 import com.hernan.gymapp.common.ui_app.animations.LoadinAnimation
 import com.hernan.gymapp.account.presentation.viewmodel.AdditionalDateViewModel
 import com.hernan.gymapp.common.Constants
@@ -58,7 +66,6 @@ fun AdditionalDatesScreen(
     phoneNumber: String?
 ) {
     val userId = FirebaseAuth.getInstance().currentUser?.uid
-    //TimeToPhotoView()
     GetDataImage(additionalDateViewModel, userId, name, phoneNumber, navController)
 }
 
@@ -108,11 +115,13 @@ fun ShowView(
     isImageLoading: Boolean,
     navController: NavHostController,
 ) {
+
     val focusManager = LocalFocusManager.current
     var capturedImage by remember { mutableStateOf<ByteArray?>(null) }
     var age by remember { mutableStateOf("") }
     var healthStatus by remember { mutableStateOf("") }
     var bodyWeight by remember { mutableStateOf("") }
+    val selectedOption = remember { mutableStateOf("") }
 
     val ageFocusRequester = remember { FocusRequester() }
     val healthStatusFocusRequester = remember { FocusRequester() }
@@ -121,7 +130,6 @@ fun ShowView(
     val isButtonEnabled = age.isNotBlank() && healthStatus.isNotBlank() && bodyWeight.isNotBlank()
 
     val userAccounted = additionalDateViewModel.userAcconted.collectAsState()
-
 
     when (val state = userAccounted.value) {
         is ResourceFlow.Idle -> {}
@@ -165,12 +173,10 @@ fun ShowView(
             item { UserImage(
                 imageFromsStorage = profilePhoto,
                 onImageCaptured = { imageBytes ->
-
                     capturedImage = imageBytes
                     // Apenas captes la imagen, subila a storage
                     additionalDateViewModel.setimageToStorage(userId, imageBytes)
-                }
-            )
+                })
             }
         }
 
@@ -235,7 +241,13 @@ fun ShowView(
                 modifier = Modifier.focusRequester(bodyWeightFocusRequester),
                 validatorHasErrors = false
             ) }
+            item { CustomRadioButton(
+                selectedOption = selectedOption.value,
+                onOptionSelected = {selectedOption.value = it},
+                modifier = Modifier,
 
+
+                )}
 
             item { OutlinedRoundedButton(
                 enabled = isButtonEnabled,
@@ -251,7 +263,9 @@ fun ShowView(
         }
     }
 }
-
+/**
+ * LLamo a la imagen circular con la imagen de user. si se concede el permiso se podra tomar una selfie
+ * **/
 @Composable
 fun UserImage(
     imageFromsStorage: String,
@@ -259,20 +273,28 @@ fun UserImage(
 )
 {
 
+    val context = LocalContext.current
     var showCamera by remember { mutableStateOf(false) }
-    var hasCameraPermission by remember { mutableStateOf(false) }
+    var shootToast by remember { mutableStateOf(false) }
     /**
      * Solicito los permisos necesarios y
      * abro la camara
      * **/
 
-    PermissionCustomCamera()
-    RequestCameraPermission(
-        onPermissionGranted = { hasCameraPermission = true },
-        onPermissionDenied = { /* manejar si querés */ }
-    )
+    val permission = android.Manifest.permission.CAMERA
+    var hasCameraPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+        )
+    }
+    /**Obtengo el permiso y cambio el valor de "hasCameraPermission"
+     * Con "rememberLauncherForActivityResult" actualizo en tiemporeal el permiso desde el click en la imagen **/
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        hasCameraPermission = isGranted
+    }
 
-    if (hasCameraPermission) {
         if (showCamera) {
             OpenCamera(
                 onImageCaptured = { imageBytes ->
@@ -290,7 +312,6 @@ fun UserImage(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 GlideImage(
-
                     imageModel = {
                         if (imageFromsStorage.isNotBlank()) imageFromsStorage else R.drawable.avatar
                     },
@@ -304,17 +325,36 @@ fun UserImage(
                             shape = CircleShape
                         )
                         .clickable {
-                            showCamera = true
+                            if (!hasCameraPermission) {
+                                permissionLauncher.launch(permission)
+                                shootToast = true
+                            } else {
+                                showCamera = true
+                            }
+
                         }
                 )
             }
         }
+
+    /** si no tengo permiso. Lanzo un Toast informando donde solicitarlo en la configuracion**/
+    if (shootToast) {
+        ShowToastMessage(
+            message = stringResource(R.string.go_to_config_for_camera_permission),
+            context = context
+        )
+        shootToast = false
     }
 }
 
+@Composable
+fun ShowToastMessage(message: String, context: Context) {
+    val duration = Toast.LENGTH_SHORT
 
+    val toast = Toast.makeText(context, message, duration)
+    toast.show()
+}
 
 /**
  * TODO crear los spinner para el genero, para el estado de salud, y objetivos.
- * TODO crear validaciones para los editText
  * **/

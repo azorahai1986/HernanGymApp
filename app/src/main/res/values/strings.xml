@@ -24,4 +24,5 @@
     <string name="placeholder_search">Search</string>
     <string name="info_for_selfies">Es momento de tomarte una selfie. O si lo prefieres elegí una foto desde tu galería</string>
     <string name="info_for_toolbar">Información adicional para %1$s</string>
+    <string name="go_to_config_for_camera_permission">Solicita permisos desde ajustes</string>
 </resources>
