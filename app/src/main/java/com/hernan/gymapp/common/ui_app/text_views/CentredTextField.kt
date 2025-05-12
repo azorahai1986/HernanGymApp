@@ -14,8 +14,6 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CentredTextField(text: String, size: TextUnit) {
-    Spacer(modifier = Modifier.height(48.dp))
-
     Text(
         modifier = Modifier
             .fillMaxWidth()

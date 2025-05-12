@@ -44,8 +44,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.hernan.gymapp.R
 import com.hernan.gymapp.account.data.model.AdditionalDateDto
 import com.hernan.gymapp.account.presentation.ui.camera.OpenCamera
-import com.hernan.gymapp.account.presentation.ui.camera.PermissionCustomCamera
-import com.hernan.gymapp.account.presentation.ui.camera.RequestCameraPermission
 import com.hernan.gymapp.account.presentation.ui.views.radiobutton.CustomRadioButton
 import com.hernan.gymapp.common.ui_app.animations.LoadinAnimation
 import com.hernan.gymapp.account.presentation.viewmodel.AdditionalDateViewModel
@@ -123,6 +121,12 @@ fun ShowView(
     var bodyWeight by remember { mutableStateOf("") }
     val selectedOption = remember { mutableStateOf("") }
 
+    // Listas para los RadioButtons
+    val genderOptions = listOf("Masculino", "Femenino", "No Binario")
+    val healthStateOptions = listOf("Bueno", "Regular", "Malo")
+    val objectiveOptions = listOf("Quemar grasas", "Tonificar Musculos", "Incrementar masa muscular", "Todas las anteriores")
+
+
     val ageFocusRequester = remember { FocusRequester() }
     val healthStatusFocusRequester = remember { FocusRequester() }
     val bodyWeightFocusRequester = remember { FocusRequester() }
@@ -156,6 +160,9 @@ fun ShowView(
         pay = false
     )
 
+    /** "imePadding()" es una función modificadora (Modifier) que ajusta automáticamente
+     *  el espaciado del contenido de una pantalla cuando aparece el teclado en pantalla**/
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -165,7 +172,9 @@ fun ShowView(
 
         if (!isSuccessImage) {
             item { ToolbarUsersType(stringResource(R.string.info_for_toolbar, name ?: "Usuario")) }
-            item { CentredTextField(stringResource(R.string.info_for_selfies), 18.sp)
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                CentredTextField(stringResource(R.string.info_for_selfies), 18.sp)
                 Spacer(modifier = Modifier.height(16.dp)) }
         }
 
@@ -181,6 +190,7 @@ fun ShowView(
         }
 
         item {
+            Spacer(modifier = Modifier.height(28.dp))
             if (isImageLoading) {
                 CentredTextField("Cargando Imagen. Por favor espera...", 12.sp)
             } else {
@@ -188,7 +198,7 @@ fun ShowView(
             }
         }
 
-        if (isSuccessImage) {
+        if (!isSuccessImage) {
             item { EditTextCustom(
                 text = age,
                 onValueChange = {age = it},
@@ -209,23 +219,6 @@ fun ShowView(
             ) }
 
             item { EditTextCustom(
-                text = healthStatus,
-                onValueChange = {healthStatus = it},
-                textType = Constants.SIMPLE_TEXT,
-                elevationText = "Dinos tu estado de salud",
-                hint = "",
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { bodyWeightFocusRequester.requestFocus() }
-                ),
-                modifier = Modifier.focusRequester(healthStatusFocusRequester),
-                validatorHasErrors = false
-            ) }
-
-            item { EditTextCustom(
                 text = bodyWeight,
                 onValueChange = {bodyWeight = it},
                 textType = Constants.SIMPLE_TEXT,
@@ -241,13 +234,51 @@ fun ShowView(
                 modifier = Modifier.focusRequester(bodyWeightFocusRequester),
                 validatorHasErrors = false
             ) }
-            item { CustomRadioButton(
+
+            // RadioButton de genero...........
+            item { CentredTextField("Elige el género", 16.sp) }
+            item {
+                Spacer(modifier = Modifier.height(18.dp))
+
+                CustomRadioButton(
                 selectedOption = selectedOption.value,
                 onOptionSelected = {selectedOption.value = it},
                 modifier = Modifier,
-
-
+                radioOptions = genderOptions
                 )}
+
+            // RadioButton de Estado de Salud..........
+            item {
+                Spacer(modifier = Modifier.height(18.dp))
+                CentredTextField("Señala tu estado de salud", 16.sp)
+            }
+            item {
+                Spacer(modifier = Modifier.height(18.dp))
+
+                CustomRadioButton(
+                    selectedOption = selectedOption.value,
+                    onOptionSelected = {selectedOption.value = it},
+                    modifier = Modifier,
+                    radioOptions = healthStateOptions
+                )}
+
+            // RadioButton de Estado de Objetivos..........
+            item {
+                Spacer(modifier = Modifier.height(18.dp))
+                CentredTextField("Señala tus Objetivos a lograr", 16.sp)
+            }
+            item {
+                Spacer(modifier = Modifier.height(18.dp))
+
+                CustomRadioButton(
+                    selectedOption = selectedOption.value,
+                    onOptionSelected = {selectedOption.value = it},
+                    modifier = Modifier,
+                    radioOptions = objectiveOptions
+                )
+                Spacer(modifier = Modifier.height(28.dp))
+
+            }
 
             item { OutlinedRoundedButton(
                 enabled = isButtonEnabled,
@@ -259,7 +290,10 @@ fun ShowView(
 
                 },
                 text = "Registrarse"
-            ) }
+            )
+                Spacer(modifier = Modifier.height(28.dp))
+
+            }
         }
     }
 }
