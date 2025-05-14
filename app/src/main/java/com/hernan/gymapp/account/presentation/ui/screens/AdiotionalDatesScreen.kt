@@ -119,19 +119,25 @@ fun ShowView(
     var age by remember { mutableStateOf("") }
     var healthStatus by remember { mutableStateOf("") }
     var bodyWeight by remember { mutableStateOf("") }
-    val selectedOption = remember { mutableStateOf("") }
+    // valores tomados de la lista de radioButton
+    val selectedObjectives = remember { mutableStateOf("") }
+    val selectedHealth = remember { mutableStateOf("") }
+    val selectedGender = remember { mutableStateOf("") }
 
     // Listas para los RadioButtons
     val genderOptions = listOf("Masculino", "Femenino", "No Binario")
     val healthStateOptions = listOf("Bueno", "Regular", "Malo")
     val objectiveOptions = listOf("Quemar grasas", "Tonificar Musculos", "Incrementar masa muscular", "Todas las anteriores")
 
-
     val ageFocusRequester = remember { FocusRequester() }
     val healthStatusFocusRequester = remember { FocusRequester() }
     val bodyWeightFocusRequester = remember { FocusRequester() }
 
-    val isButtonEnabled = age.isNotBlank() && healthStatus.isNotBlank() && bodyWeight.isNotBlank()
+    val isButtonEnabled = age.isNotBlank()
+            && bodyWeight.isNotBlank()
+            && selectedGender.value.isNotBlank()
+            && selectedHealth.value.isNotBlank()
+            && selectedObjectives.value.isNotBlank()
 
     val userAccounted = additionalDateViewModel.userAcconted.collectAsState()
 
@@ -151,16 +157,16 @@ fun ShowView(
         name = name ?: "No Name",
         userImage = profilePhoto,
         classes = "0",  // se completará cuando el cliente realice un pago. Segun la forma. si paga por clase o por mes, etc
-        edad = age,
-        estadoSalud = healthStatus,  /**TODO colocar un spinner**/
-        objetivo = "Bajar grasas. Quemar calorias", /**TODO colocar un spinner ó un radioButton, que pueda elegir mas de una opción. evaluar eso**/
+        edad = "$age años",
+        estadoSalud = selectedHealth.value,
+        objetivo = selectedObjectives.value, /**TODO que pueda elegir mas de una opción. evaluar eso**/
         phoneNumber = phoneNumber ?: "0000-0000",
-        weight = bodyWeight,
-        gender = "Masculino", /**TODO colocar un spinner**/
+        weight = "$bodyWeight kgms",
+        gender = selectedGender.value,
         pay = false
     )
 
-    /** "imePadding()" es una función modificadora (Modifier) que ajusta automáticamente
+    /** [imePadding] es una función modificadora (Modifier) que ajusta automáticamente
      *  el espaciado del contenido de una pantalla cuando aparece el teclado en pantalla**/
 
     LazyColumn(
@@ -173,7 +179,7 @@ fun ShowView(
         if (!isSuccessImage) {
             item { ToolbarUsersType(stringResource(R.string.info_for_toolbar, name ?: "Usuario")) }
             item {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(20.dp))
                 CentredTextField(stringResource(R.string.info_for_selfies), 18.sp)
                 Spacer(modifier = Modifier.height(16.dp)) }
         }
@@ -198,7 +204,7 @@ fun ShowView(
             }
         }
 
-        if (!isSuccessImage) {
+        if (isSuccessImage) {
             item { EditTextCustom(
                 text = age,
                 onValueChange = {age = it},
@@ -210,12 +216,11 @@ fun ShowView(
                     imeAction = ImeAction.Next
                 ),
                 keyboardActions = KeyboardActions(
-                    onNext = { healthStatusFocusRequester.requestFocus() }
+                    onNext = { bodyWeightFocusRequester.requestFocus() }
                 ),
                 modifier = Modifier
                     .focusRequester(ageFocusRequester),
                 validatorHasErrors = false
-
             ) }
 
             item { EditTextCustom(
@@ -241,23 +246,25 @@ fun ShowView(
                 Spacer(modifier = Modifier.height(18.dp))
 
                 CustomRadioButton(
-                selectedOption = selectedOption.value,
-                onOptionSelected = {selectedOption.value = it},
+                selectedOption = selectedGender.value.toString(),
+                onOptionSelected = { selectedGender.value = it },
                 modifier = Modifier,
                 radioOptions = genderOptions
                 )}
 
-            // RadioButton de Estado de Salud..........
             item {
                 Spacer(modifier = Modifier.height(18.dp))
                 CentredTextField("Señala tu estado de salud", 16.sp)
             }
+            // RadioButton de Estado de Salud..........
             item {
                 Spacer(modifier = Modifier.height(18.dp))
 
                 CustomRadioButton(
-                    selectedOption = selectedOption.value,
-                    onOptionSelected = {selectedOption.value = it},
+                    selectedOption = selectedHealth.value,
+                    onOptionSelected = {
+                        selectedHealth.value = it
+                                        },
                     modifier = Modifier,
                     radioOptions = healthStateOptions
                 )}
@@ -271,8 +278,8 @@ fun ShowView(
                 Spacer(modifier = Modifier.height(18.dp))
 
                 CustomRadioButton(
-                    selectedOption = selectedOption.value,
-                    onOptionSelected = {selectedOption.value = it},
+                    selectedOption = selectedObjectives.value,
+                    onOptionSelected = {selectedObjectives.value = it},
                     modifier = Modifier,
                     radioOptions = objectiveOptions
                 )

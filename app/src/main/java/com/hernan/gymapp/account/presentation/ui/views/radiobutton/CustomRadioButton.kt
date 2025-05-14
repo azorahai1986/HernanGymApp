@@ -31,7 +31,7 @@ fun CustomRadioButton(
 ) {
     //(selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
     // Note that Modifier.selectableGroup() is essential to ensure correct accessibility behavior
-    var selectedOption by remember { mutableStateOf(radioOptions[0]) }
+    //var selectedOption by remember { mutableStateOf(radioOptions[0]) }
     Column {
         Text("Seleccioná una opción:", style = MaterialTheme.typography.titleMedium)
         radioOptions.forEach { option ->
@@ -41,11 +41,11 @@ fun CustomRadioButton(
                     .fillMaxWidth()
                     .height(26.dp)
                     .padding(horizontal = 55.dp)
-                    .clickable { selectedOption = option } // hace clic en toda la fila
+                    .clickable { onOptionSelected(option) } // hace clic en toda la fila
             ) {
                 RadioButton(
                     selected = (option == selectedOption),
-                    onClick = { selectedOption = option }
+                    onClick = { onOptionSelected(option) }
                 )
                 Text(
                     text = option,

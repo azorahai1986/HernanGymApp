@@ -163,8 +163,7 @@ private fun goToUserInfo(text: String, context: Context) {
         "Rutinas" -> navControl.navigate(route = Screens.RoutineScreen.routes + "/Rutinas")
         "Tipos de clientes" -> navControl.navigate(route = Screens.UsersTypeScreen.routes + "/Tipos de clientes")
         "QR Scanner" -> navControl.navigate(route = Screens.QRScannerScreen.routes + "/\"QR Scanner\"")
-        //"Registrate como usuario" -> navControl.navigate(route = Screens.AccountScreen.routes)
-        "Registrate como usuario" -> navControl.navigate(route = Screens.AdditionalDateScreen.routes + "/Tipos de clientes" + "/Tipos de clientes")
+        "Registrate como usuario" -> navControl.navigate(route = Screens.AccountScreen.routes)
     }
 
 }
