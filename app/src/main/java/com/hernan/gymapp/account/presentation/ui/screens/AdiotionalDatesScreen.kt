@@ -117,7 +117,6 @@ fun ShowView(
     val focusManager = LocalFocusManager.current
     var capturedImage by remember { mutableStateOf<ByteArray?>(null) }
     var age by remember { mutableStateOf("") }
-    var healthStatus by remember { mutableStateOf("") }
     var bodyWeight by remember { mutableStateOf("") }
     // valores tomados de la lista de radioButton
     val selectedObjectives = remember { mutableStateOf("") }
@@ -130,7 +129,6 @@ fun ShowView(
     val objectiveOptions = listOf("Quemar grasas", "Tonificar Musculos", "Incrementar masa muscular", "Todas las anteriores")
 
     val ageFocusRequester = remember { FocusRequester() }
-    val healthStatusFocusRequester = remember { FocusRequester() }
     val bodyWeightFocusRequester = remember { FocusRequester() }
 
     val isButtonEnabled = age.isNotBlank()

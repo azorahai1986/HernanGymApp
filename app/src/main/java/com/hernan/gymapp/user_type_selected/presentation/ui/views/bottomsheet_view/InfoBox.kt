@@ -47,7 +47,7 @@ fun InfoBox(user: UserTypeSelected, cliesnState: String) {
                         InfoRow("Tipo de cliente: ${user.typeId}", R.drawable.avatar)
                     }
                     Constants.health -> {
-                        InfoRow("Peso: ${user.weight}kg", R.drawable.perdida_de_peso)
+                        InfoRow("Peso: ${user.weight}", R.drawable.perdida_de_peso)
                         InfoRow("Edad: ${user.edad}", R.drawable.age_icon)
                         InfoRow("Metas: ${user.objetivo}", R.drawable.objetivos_icon)
                         InfoRow("Estado Salud: ${user.estadoSalud}", R.drawable.condicion_fisica_femenina)
