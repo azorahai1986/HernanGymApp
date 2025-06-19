@@ -13,4 +13,5 @@ sealed class Screens(val routes:String){
     data object QrSuccessRegistration: Screens("QrSuccessRegistration")
     data object AccountScreen: Screens("AccountScreen")
     data object AdditionalDateScreen: Screens("AdditionalDateScreen")
+    data object CalendaryScreen: Screens("CalendaryScreen")
 }

@@ -16,6 +16,7 @@ import com.hernan.gymapp.account.presentation.ui.screens.AccountScreen
 import com.hernan.gymapp.account.presentation.ui.screens.AdditionalDatesScreen
 import com.hernan.gymapp.account.presentation.viewmodel.AdditionalDateViewModel
 import com.hernan.gymapp.account.presentation.viewmodel.RegisterViewModel
+import com.hernan.gymapp.calendary.presentation.ui.CalendaryScreen
 import com.hernan.gymapp.user_type.presentation.viewmodel.ClientViewModel
 import com.hernan.gymapp.main_screen.common.presentation.viewmodel.StateViewModel
 import com.hernan.gymapp.common.ui_app.SplashScreen
@@ -158,6 +159,12 @@ fun AppNavigation(){
                     phoneNumber = backStackEntry.arguments?.getString("phoneNumber")
                 )
             }
+
+        composable(route = Screens.CalendaryScreen.routes){
+            //val accountViewModel: RegisterViewModel = hiltViewModel()
+            CalendaryScreen()
+        }
+
         }
 
 
