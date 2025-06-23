@@ -19,5 +19,12 @@ object Constants {
     /**
      * TODO Cambiar el nombre del adiministrador de la app segun corresponda a mi cliente.
      *  De esa manera se valida correctamente el QR
+     *
+     *  TODO agregar lista de videos para cargale a un cliente.
+     *
+     *  TODO Agregar ficha de salud cuando se regisgtre o despues. y recoradr que se debe entragar eso
+     *  
+     *  
+     *  TODO Agregar Indice de masa muscular
      **/
 }
