@@ -32,13 +32,16 @@ import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.time.Instant
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CalendaryScreen() {
     DatePickerFieldToModal()
+    convertMillisToDate()
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -156,13 +159,28 @@ fun DatePickerModal(
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun convertMillisToDate(millis: Long): String {
-    val localDate = Instant.ofEpochMilli(millis)
+fun convertMillisToDate() {
+    /*val localDate = Instant.ofEpochMilli(millis)
         .atZone(ZoneOffset.UTC)  // 🔁 Usar UTC
         .toLocalDate()
 
     val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-    Log.d("Select formatted", formatter.toString())
+    Log.d("Select formatted", formatter.toString())*/
 
-    return formatter.format(localDate)
+    val calendar = Calendar.getInstance()
+    Log.d("Calendar Day Week", calendar.firstDayOfWeek.toString())
+    Log.d("Calendar Type", calendar.calendarType.toString())
+    Log.d("Calendar Week Year", calendar.weekYear.toString())
+    Log.d("Calendar Weeks in Year", calendar.weeksInWeekYear.toString())
+    Log.d("Calendar Time", calendar.time.toString())
+    Log.d("Calendar Time", calendar.time.day.toString())
+    Log.d("Calendar Instant", calendar.toInstant().toString())
+    Log.d("Calendar DATE", calendar.get(Calendar.DATE).toString())
+    Log.d("Calendar Fiday", calendar.get(Calendar.FRIDAY).toString())
+    Log.d("Calendar DAY IN MONTH", calendar.get(Calendar.DAY_OF_WEEK_IN_MONTH).toString())
+    val yearMonth = YearMonth.of(2025, 7) // Febrero 2025
+    val daysList = (1..yearMonth.lengthOfMonth()).toList()
+    Log.d("Days in month", daysList.toString())
+
+
 }
