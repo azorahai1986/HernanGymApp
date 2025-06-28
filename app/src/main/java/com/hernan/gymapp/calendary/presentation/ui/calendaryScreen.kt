@@ -3,16 +3,26 @@ package com.hernan.gymapp.calendary.presentation.ui
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -22,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -42,6 +53,7 @@ import java.util.Calendar
 fun CalendaryScreen() {
     DatePickerFieldToModal()
     convertMillisToDate()
+    SimpleGrid()
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -160,27 +172,44 @@ fun DatePickerModal(
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun convertMillisToDate() {
-    /*val localDate = Instant.ofEpochMilli(millis)
-        .atZone(ZoneOffset.UTC)  // 🔁 Usar UTC
-        .toLocalDate()
-
-    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-    Log.d("Select formatted", formatter.toString())*/
 
     val calendar = Calendar.getInstance()
-    Log.d("Calendar Day Week", calendar.firstDayOfWeek.toString())
-    Log.d("Calendar Type", calendar.calendarType.toString())
-    Log.d("Calendar Week Year", calendar.weekYear.toString())
-    Log.d("Calendar Weeks in Year", calendar.weeksInWeekYear.toString())
-    Log.d("Calendar Time", calendar.time.toString())
-    Log.d("Calendar Time", calendar.time.day.toString())
-    Log.d("Calendar Instant", calendar.toInstant().toString())
-    Log.d("Calendar DATE", calendar.get(Calendar.DATE).toString())
-    Log.d("Calendar Fiday", calendar.get(Calendar.FRIDAY).toString())
-    Log.d("Calendar DAY IN MONTH", calendar.get(Calendar.DAY_OF_WEEK_IN_MONTH).toString())
-    val yearMonth = YearMonth.of(2025, 7) // Febrero 2025
+    val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+    Log.d("Calendar Week Year", calendar.weekYear.toString()) //año actual
+    Log.d("Calendar Time", calendar.time.toString()) // fecha de hoy con dia
+    Log.d("Calendar Time", dayOfWeek.toString())  // posición del dia de hoy
+    Log.d("Calendar DATE", calendar.get(Calendar.DATE).toString()) // dia de hoy en numero
+    val yearMonth = YearMonth.of(2025, 7)
     val daysList = (1..yearMonth.lengthOfMonth()).toList()
     Log.d("Days in month", daysList.toString())
 
 
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun SimpleGrid() {
+    val items = (1..30).toList() // Ejemplo de items
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3), // 3 columnas
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp),
+        contentPadding = PaddingValues(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(items.size) { index ->
+            Box(
+                modifier = Modifier
+                    .aspectRatio(1f)
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "Item ${items[index]}")
+            }
+        }
+    }
 }
