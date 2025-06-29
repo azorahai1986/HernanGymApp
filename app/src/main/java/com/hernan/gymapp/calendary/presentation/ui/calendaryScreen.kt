@@ -11,9 +11,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
@@ -47,13 +50,15 @@ import java.time.YearMonth
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
+import java.time.format.TextStyle
+import java.time.temporal.TemporalAdjusters
+import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CalendaryScreen() {
     DatePickerFieldToModal()
-    convertMillisToDate()
-    SimpleGrid()
+    //SimpleGrid()
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -126,19 +131,7 @@ fun ShowDatePicker(
                 negativeButton("Cancelar")
             }
         ) {
-            datepicker(
-                title = "Elegí una fecha",
-                allowedDateValidator = {
-                    it.dayOfWeek.value != 7 // deshabilitar domingos
-                },
-                colors = DatePickerDefaults.colors(
-                    headerBackgroundColor = Color(0xFF2196F3),
-                    dateActiveBackgroundColor = Color(0xFF4CAF50),
-                    dateInactiveBackgroundColor = Color(0xFFE0E0E0)
-                )
-            ) {
-                onDateSelected(it)
-            }
+            SimpleGrid()
         }
     }
 }
@@ -171,44 +164,70 @@ fun DatePickerModal(
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun convertMillisToDate() {
+fun calendarDayList(year: Int, month: Int): List<String> {
+    val primerDia = LocalDate.of(year, month, 1)
+    val yearMonth = YearMonth.of(year, month)
+    val lastDay = yearMonth.lengthOfMonth()
 
-    val calendar = Calendar.getInstance()
-    val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-    Log.d("Calendar Week Year", calendar.weekYear.toString()) //año actual
-    Log.d("Calendar Time", calendar.time.toString()) // fecha de hoy con dia
-    Log.d("Calendar Time", dayOfWeek.toString())  // posición del dia de hoy
-    Log.d("Calendar DATE", calendar.get(Calendar.DATE).toString()) // dia de hoy en numero
-    val yearMonth = YearMonth.of(2025, 7)
-    val daysList = (1..yearMonth.lengthOfMonth()).toList()
-    Log.d("Days in month", daysList.toString())
+    val dayOfWeekNames = listOf("lun", "mar", "mié", "jue", "vie", "sáb", "dom")
+
+    val nombrePrimerDia = primerDia.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale("es", "ES")).lowercase()
+    val primerIndice = dayOfWeekNames.indexOf(nombrePrimerDia)
+
+    val diasTotales = 42 // 6 semanas x 7 días
+    val calendario = mutableListOf<String>()
+
+    for (i in 0 until diasTotales) {
+        val dia = i - primerIndice + 1
+        if (dia in 1..lastDay) {
+            calendario.add(dia.toString())
+        } else {
+            calendario.add("")
+        }
+    }
+
+    return calendario
 
 
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SimpleGrid() {
-    val items = (1..30).toList() // Ejemplo de items
+    val daysofWeek = listOf("Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom")
 
     LazyVerticalGrid(
-        columns = GridCells.Fixed(3), // 3 columnas
+        columns = GridCells.Fixed(7), // 7 columnas
         modifier = Modifier
-            .fillMaxSize()
+            .defaultMinSize()
             .padding(8.dp),
         contentPadding = PaddingValues(4.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(items.size) { index ->
+        items(daysofWeek.size) { index ->
             Box(
                 modifier = Modifier
                     .aspectRatio(1f)
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.primaryContainer),
+                    .width(12.dp)
+                    .height(12.dp)
+                    .background(Color.White),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "Item ${items[index]}")
+                Text(text = daysofWeek[index].toString())
+            }
+        }
+        items(calendarDayList(2025, 6).size) { index ->
+            Box(
+                modifier = Modifier
+                    .aspectRatio(1f)
+                    .width(12.dp)
+                    .height(12.dp)
+                    .background(Color.White),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = calendarDayList(2025, 6)[index].toString())
             }
         }
     }
