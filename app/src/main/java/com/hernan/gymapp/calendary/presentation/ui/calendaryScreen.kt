@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,16 +20,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import com.hernan.gymapp.calendary.presentation.view.CustomCalendar
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.MaterialDialogState
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
-import java.time.LocalDate
-import java.time.YearMonth
 import java.time.format.DateTimeFormatter
-import java.time.format.TextStyle
-import java.util.Locale
-import kotlin.toString
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -43,7 +40,6 @@ fun DatePickerFieldToModal(modifier: Modifier = Modifier) {
     val dialogState = rememberMaterialDialogState()
     var selectedDate by remember { mutableStateOf("") }
 
-    Log.d("Select DATE", selectedDate.toString())
     Column(modifier = modifier
         .fillMaxWidth()
         .padding(vertical = 10.dp, horizontal = 55.dp)) {
@@ -89,15 +85,16 @@ fun ShowDatePicker(
     onDateSelected: (String) -> Unit,
     dialogState: MaterialDialogState
 ) {
-    Log.d("Select DATE", selectedDate.toString())
-
     Column {
 
         MaterialDialog(
+            backgroundColor = MaterialTheme.colorScheme.background,
             dialogState = dialogState,
+            properties = DialogProperties(
+                dismissOnClickOutside = false
+            ),
             buttons = {
                 positiveButton("Aceptar")
-                negativeButton("Cancelar")
             },
 
         ) {
@@ -108,3 +105,4 @@ fun ShowDatePicker(
     }
 }
 
+//TODO emprolijar código. ver si los meses y año y demas fechas se puede pasar a otra clase
