@@ -28,23 +28,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.hernan.gymapp.calendary.utils_calendary.DateProvider.anioActual
+import com.hernan.gymapp.calendary.utils_calendary.DateProvider.calendarDayList
+import com.hernan.gymapp.calendary.utils_calendary.DateProvider.daysOfWeek
+import com.hernan.gymapp.calendary.utils_calendary.DateProvider.diaActual
+import com.hernan.gymapp.calendary.utils_calendary.DateProvider.mesActual
 import com.hernan.gymapp.common.ui_app.text_views.CustomWhiteText
-import java.time.LocalDate
-import java.time.YearMonth
-import java.time.format.TextStyle
-import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CustomCalendar(onDateSelected: (String) -> Unit) {
-    val fechaActual = LocalDate.now()
-    val anioActual = fechaActual.year
-    val daysofWeek = listOf("Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom")
-    var mesActual = fechaActual.monthValue
-
-    var month by remember { mutableIntStateOf(mesActual) }
+    var month by remember { mutableIntStateOf(mesActual()) }
+    var toDay by remember { mutableIntStateOf(diaActual()) }
     val days by remember { // Con derivedStateOf Puedo cambiar el calendario segun el mes en tiempo real..
-        derivedStateOf { calendarDayList(anioActual, month) }
+        derivedStateOf { calendarDayList(anioActual(), month) }
     }
 
     Column(modifier = Modifier
@@ -53,7 +50,8 @@ fun CustomCalendar(onDateSelected: (String) -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.padding(top = 24.dp))
         CustomWhiteText(
-            text = anioActual.toString()
+            text = anioActual().toString(),
+            background = MaterialTheme.colorScheme.background
         )
 
         CustomSpinner(
@@ -70,7 +68,7 @@ fun CustomCalendar(onDateSelected: (String) -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(daysofWeek.size) { index ->
+            items(daysOfWeek().size) { index ->
                 Box(
                     modifier = Modifier
                         .aspectRatio(1f)
@@ -80,7 +78,8 @@ fun CustomCalendar(onDateSelected: (String) -> Unit) {
                     contentAlignment = Alignment.Center
                 ) {
                     CustomWhiteText(
-                        text = daysofWeek[index]
+                        text = daysOfWeek()[index],
+                        background = MaterialTheme.colorScheme.background
                     )
                 }
             }
@@ -94,45 +93,21 @@ fun CustomCalendar(onDateSelected: (String) -> Unit) {
                         .background(color = MaterialTheme.colorScheme.background)
                         .clickable(
                             onClick = {
-                                Log.d("Dia Clickeado", days.toString())
-                                onDateSelected("${days[index]}/$month/$anioActual")
+                                Log.d("Dia Clickeado", days[index].toString())
+                                onDateSelected("${days[index]}/$month/${anioActual()}")
                             }
                         ),
                     contentAlignment = Alignment.Center
                 ) {
                     CustomWhiteText(
-                        text = days[index]
+                        text = days[index],
+                        background =
+                            if (days[index] == diaActual().toString())
+                            MaterialTheme.colorScheme.onTertiary
+                            else MaterialTheme.colorScheme.background
                     )
                 }
             }
         }
     }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-fun calendarDayList(year: Int, month: Int): List<String> {
-    val primerDia = LocalDate.of(year, month, 1)
-    val yearMonth = YearMonth.of(year, month)
-    val lastDay = yearMonth.lengthOfMonth()
-
-    val dayOfWeekNames = listOf("lun", "mar", "mié", "jue", "vie", "sáb", "dom")
-
-    val nombrePrimerDia = primerDia.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale("es", "ES")).lowercase()
-    val primerIndice = dayOfWeekNames.indexOf(nombrePrimerDia)
-
-    val diasTotales = 42 // 6 semanas x 7 días
-    val calendario = mutableListOf<String>()
-
-    for (i in 0 until diasTotales) {
-        val dia = i - primerIndice + 1
-        if (dia in 1..lastDay) {
-            calendario.add(dia.toString())
-        } else {
-            calendario.add("")
-        }
-    }
-
-    return calendario
-
-
 }
