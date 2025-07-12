@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -27,12 +28,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.hernan.gymapp.calendary.utils_calendary.DateProvider.anioActual
 import com.hernan.gymapp.calendary.utils_calendary.DateProvider.calendarDayList
 import com.hernan.gymapp.calendary.utils_calendary.DateProvider.daysOfWeek
 import com.hernan.gymapp.calendary.utils_calendary.DateProvider.diaActual
 import com.hernan.gymapp.calendary.utils_calendary.DateProvider.mesActual
+import com.hernan.gymapp.common.ui.theme.md_theme_light_primary
 import com.hernan.gymapp.common.ui_app.text_views.CustomWhiteText
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -99,13 +102,16 @@ fun CustomCalendar(onDateSelected: (String) -> Unit) {
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    CustomWhiteText(
-                        text = days[index],
-                        background =
-                            if (days[index] == diaActual().toString())
-                            MaterialTheme.colorScheme.onTertiary
-                            else MaterialTheme.colorScheme.background
-                    )
+
+                    Box(modifier = Modifier.clip(CircleShape)) {
+                        CustomWhiteText(
+                            text = days[index],
+                            background =
+                                if (days[index] == toDay.toString())
+                                    md_theme_light_primary
+                                else MaterialTheme.colorScheme.background
+                        )
+                    }
                 }
             }
         }
