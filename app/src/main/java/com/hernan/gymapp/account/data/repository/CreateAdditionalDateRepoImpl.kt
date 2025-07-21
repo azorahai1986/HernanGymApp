@@ -2,7 +2,6 @@ package com.hernan.gymapp.account.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.hernan.gymapp.account.data.model.AdditionalDateDto
-import com.hernan.gymapp.account.domain.model.AdditionalDate
 import com.hernan.gymapp.account.domain.repository.CreateAdditionalDateRepo
 import com.hernan.gymapp.common.state.ResourceFlow
 import kotlinx.coroutines.flow.Flow

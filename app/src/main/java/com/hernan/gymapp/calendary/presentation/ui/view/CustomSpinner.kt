@@ -1,4 +1,4 @@
-package com.hernan.gymapp.calendary.presentation.view
+package com.hernan.gymapp.calendary.presentation.ui.view
 
 import android.os.Build
 import androidx.annotation.RequiresApi

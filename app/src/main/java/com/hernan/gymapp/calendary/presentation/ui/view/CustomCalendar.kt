@@ -1,4 +1,4 @@
-package com.hernan.gymapp.calendary.presentation.view
+package com.hernan.gymapp.calendary.presentation.ui.view
 
 import android.os.Build
 import android.util.Log
@@ -35,7 +35,8 @@ import com.hernan.gymapp.calendary.utils_calendary.DateProvider.calendarDayList
 import com.hernan.gymapp.calendary.utils_calendary.DateProvider.daysOfWeek
 import com.hernan.gymapp.calendary.utils_calendary.DateProvider.diaActual
 import com.hernan.gymapp.calendary.utils_calendary.DateProvider.mesActual
-import com.hernan.gymapp.common.ui.theme.md_theme_light_primary
+import com.hernan.gymapp.common.ui.theme.availableGrey
+import com.hernan.gymapp.common.ui.theme.orange_primary
 import com.hernan.gymapp.common.ui_app.text_views.CustomWhiteText
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -108,8 +109,8 @@ fun CustomCalendar(onDateSelected: (String) -> Unit) {
                             text = days[index],
                             background =
                                 if (days[index] == toDay.toString())
-                                    md_theme_light_primary
-                                else MaterialTheme.colorScheme.background
+                                    orange_primary
+                                else availableGrey
                         )
                     }
                 }
