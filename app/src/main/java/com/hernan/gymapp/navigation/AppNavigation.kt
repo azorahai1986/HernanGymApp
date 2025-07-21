@@ -22,7 +22,6 @@ import com.hernan.gymapp.calendary.presentation.ui.screens.CalendaryScreen
 import com.hernan.gymapp.user_type.presentation.viewmodel.ClientViewModel
 import com.hernan.gymapp.main_screen.common.presentation.viewmodel.StateViewModel
 import com.hernan.gymapp.common.ui_app.SplashScreen
-import com.hernan.gymapp.common.ui_app.TurnsScreen
 import com.hernan.gymapp.main_screen.common.presentation.ui.screen.MainScreen
 import com.hernan.gymapp.navigation.Screens.MainScreen
 import com.hernan.gymapp.qr_classes_control.QRScannerScreen
@@ -54,13 +53,6 @@ fun AppNavigation(){
         composable(route = MainScreen.routes){
             val firstViewModel: StateViewModel = hiltViewModel()
             MainScreen(isdarkTheme, navController, firstViewModel)
-        }
-
-        composable(route = Screens.TurnsScreen.routes + "/{text}",
-            arguments = listOf(navArgument(name = "text") {
-                type = NavType.StringType
-            })){
-            TurnsScreen(isdarkTheme, navController, it.arguments?.getString("text"))
         }
 
         composable(route = Screens.UsersTypeScreen.routes + "/{text}",
