@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.hernan.gymapp.calendary.data.model.Shifts
 import com.hernan.gymapp.calendary.presentation.ui.view.CustomCalendar
 import com.hernan.gymapp.calendary.presentation.viewmodel.ShiftsViewModel
 import com.hernan.gymapp.common.state.ResourceFlow
@@ -62,8 +63,9 @@ fun DatePickerFieldToModal(modifier: Modifier = Modifier) {
     var showModal by remember { mutableStateOf(false) }
     val dialogState = rememberMaterialDialogState()
     var selectedDate by remember { mutableStateOf("") }
+    var selectedHour by remember { mutableStateOf("") }
+    val shift = Shifts(selectedHour, selectedDate)
     val viewmodelShift: ShiftsViewModel = hiltViewModel()
-    viewmodelShift.setShift(selectedDate, userId)
     val viewModelState = viewmodelShift.shift.collectAsState()
     Column(modifier = modifier
         .fillMaxWidth()
@@ -92,18 +94,19 @@ fun DatePickerFieldToModal(modifier: Modifier = Modifier) {
                     Log.d("SHOW MODEL", showModal.toString())
                 }
         )
-        Log.e("SELECT DATE VALUE", selectedDate.toString())
+        Log.e("SELECT Hour VALUE", selectedHour.toString())
+
+        if (selectedDate.isNotEmpty()) ShowHoursList(hourSelected = {selectedHour = it})
 
        // Boton para enviar fecha a firebase
-        if (selectedDate.isNotEmpty()) {
-            ShowHoursList()
+        if (selectedHour.isNotEmpty()) {
             Spacer(modifier =
                 Modifier.weight(1f))
             OutlinedRoundedButton(
                 enabled = true,
                 onClick = {
+                    viewmodelShift.setShift(shift, userId)
                     SendShift(
-                        date = selectedDate,
                         viewModelState = viewModelState
                     )
                 },
@@ -148,7 +151,7 @@ fun ShowDatePicker(
     }
 }
 
-fun SendShift(date: String, viewModelState: State<ResourceFlow<String>>) {
+fun SendShift(viewModelState: State<ResourceFlow<String>>) {
     Log.e("SEND DATE D", viewModelState.value.toString())
     when(val state = viewModelState.value) {
         is ResourceFlow.Loading -> {}
@@ -159,7 +162,7 @@ fun SendShift(date: String, viewModelState: State<ResourceFlow<String>>) {
 }
 
 @Composable
-fun ShowHoursList() {
+fun ShowHoursList(hourSelected:(String) -> Unit) {
     val hours = listOf("9:00", "9:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30")
 
     LazyColumn(
@@ -170,7 +173,11 @@ fun ShowHoursList() {
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
-                .background(availableGrey)) {
+                .background(availableGrey)
+                .clickable {
+                    Log.e("BOX CLICKEADO", hour)
+                    hourSelected(hour)
+                }) {
                 CentredTextField(
                     text = "$hour hs",
                     size = 16.sp
