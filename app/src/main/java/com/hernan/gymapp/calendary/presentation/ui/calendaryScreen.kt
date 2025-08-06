@@ -1,7 +1,6 @@
 package com.hernan.gymapp.calendary.presentation.ui
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -55,16 +54,14 @@ fun DatePickerFieldToModal(modifier: Modifier = Modifier) {
                     modifier = Modifier.clickable {
                         showModal = true
                         dialogState.show()
-                        Log.d("SHOW MODEL", "Icon clicked")
                     }
                 )
             },
-            readOnly = true, // 👈 importante para evitar teclado
+            readOnly = true, //importante para evitar teclado
             modifier = modifier
                 .fillMaxWidth()
                 .clickable {
                     showModal = true
-                    Log.d("SHOW MODEL", showModal.toString())
                 }
         )
     }
@@ -104,5 +101,3 @@ fun ShowDatePicker(
         }
     }
 }
-
-//TODO emprolijar código. ver si los meses y año y demas fechas se puede pasar a otra clase
