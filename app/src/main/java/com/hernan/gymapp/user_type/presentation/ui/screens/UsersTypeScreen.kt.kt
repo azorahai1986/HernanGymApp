@@ -32,7 +32,7 @@ fun UsersTypeScreen(
 ) {
 
     Scaffold(
-        topBar = { ToolbarUsersType(text) },
+        topBar = { ToolbarUsersType(text) { navController.popBackStack() } },
         content = { paddingValues ->
             Box(modifier = Modifier.padding(paddingValues)) {
                 GetData(clientViewModel, navController)
