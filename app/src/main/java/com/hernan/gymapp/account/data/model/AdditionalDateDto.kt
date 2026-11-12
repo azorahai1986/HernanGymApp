@@ -14,20 +14,28 @@ data class AdditionalDateDto(
     var weight: String = "",
     var gender: String = "",
     var pay: Boolean = false,
+    var preferredDays: List<Int> = emptyList(),
+    var preferredHours: Map<String, String> = emptyMap(),
+    var weeklyClassLimit: Int = 2,
+    var scheduleMode: String = "FIXED",
 ) {
     fun toDomain(): AdditionalDate {
         return AdditionalDate(
-            typeId,
-            name,
-            userImage,
-            classes,
-            edad,
-            estadoSalud,
-            objetivo,
-            phoneNumber,
-            weight,
-            gender,
-            pay
+            typeId = typeId,
+            name = name,
+            userImage = userImage,
+            classes = classes,
+            edad = edad,
+            estadoSalud = estadoSalud,
+            objetivo = objetivo,
+            phoneNumber = phoneNumber,
+            weight = weight,
+            gender = gender,
+            pay = pay,
+            preferredDays = preferredDays,
+            preferredHours = preferredHours,
+            weeklyClassLimit = weeklyClassLimit,
+            scheduleMode = scheduleMode
         )
     }
 }

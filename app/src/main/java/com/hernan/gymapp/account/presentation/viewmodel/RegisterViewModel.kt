@@ -23,6 +23,7 @@ class RegisterViewModel@Inject constructor(
     fun register(accountData: AccountData) {
 
         if (_state.value is ResourceFlow.Success) return
+        _state.value = ResourceFlow.Loading
         viewModelScope.launch {
             registerUserUseCase(accountData).collectLatest { result ->
                 _state.value = result

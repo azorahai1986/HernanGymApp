@@ -11,5 +11,9 @@ data class AdditionalDate(
     var phoneNumber: String = "",
     var weight: String = "",
     var gender: String = "",
-    var pay: Boolean = false
+    var pay: Boolean = false,
+    var preferredDays: List<Int> = emptyList(),
+    var preferredHours: Map<String, String> = emptyMap(),
+    var weeklyClassLimit: Int = 2,
+    var scheduleMode: String = "FIXED"
 )

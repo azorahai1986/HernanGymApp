@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,16 +20,15 @@ class ShiftViewModel @Inject constructor(
 ): ViewModel() {
     private val _shift = MutableStateFlow<ResourceFlow<List<Shift>>>(ResourceFlow.Loading)
     val shift: StateFlow<ResourceFlow<List<Shift>>> = _shift.asStateFlow()
+    private var shiftJob: Job? = null
 
     fun getAllShifts() {
         if (_shift.value is ResourceFlow.Success) return
-
-            viewModelScope.launch {
-                shiftUseCase().collectLatest { result ->
-                    _shift.value = result
-                }
+        shiftJob?.cancel()
+        shiftJob = viewModelScope.launch {
+            shiftUseCase().collectLatest { result ->
+                _shift.value = result
             }
-
-
+        }
     }
 }

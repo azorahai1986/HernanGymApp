@@ -72,7 +72,7 @@ fun ColumnToListTypes(data: List<Client>, navController: NavHostController) {
         contentPadding = PaddingValues(vertical = 70.dp, horizontal = 16.dp),
         modifier = Modifier
             .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.scrim)
+            .background(color = MaterialTheme.colorScheme.background)
 
         ) {
         items(data) { client ->

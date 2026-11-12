@@ -1,13 +1,25 @@
 package com.hernan.gymapp.account.presentation.ui.screens
 
-import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -15,195 +27,151 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import com.hernan.gymapp.account.domain.model.AccountData
-import com.hernan.gymapp.account.presentation.viewmodel.RegisterViewModel
-import com.hernan.gymapp.common.Constants
-import com.hernan.gymapp.common.state.ResourceFlow
-import com.hernan.gymapp.common.ui_app.text_views.EditTextCustom
-import com.hernan.gymapp.common.ui_app.toolbar.ToolbarUsersType
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import com.hernan.gymapp.account.domain.model.AccountData
 import com.hernan.gymapp.account.presentation.viewmodel.PhoneNumberViewModel
+import com.hernan.gymapp.account.presentation.viewmodel.RegisterViewModel
 import com.hernan.gymapp.account.presentation.viewmodel.VerifyEmailViewModel
 import com.hernan.gymapp.account.presentation.viewmodel.VerifyPasswordViewModel
-import com.hernan.gymapp.common.ui_app.buttons.OutlinedRoundedButton
+import com.hernan.gymapp.common.state.ResourceFlow
+import com.hernan.gymapp.common.ui_app.toolbar.ToolbarUsersType
 import com.hernan.gymapp.navigation.Screens
 
 @Composable
-fun AccountScreen(
-    navController: NavHostController,
-    accountViewModel: RegisterViewModel
-) {
-
+fun AccountScreen(navController: NavHostController, accountViewModel: RegisterViewModel) {
     ViewAccountScreen(accountViewModel, navController)
-
 }
 
 fun navigateToAdittionalsDate(data: AccountData, navControl: NavHostController) {
-    navControl.navigate(
-        route = Screens.AdditionalDateScreen.routes + "/${data.name}" + "/${data.phoneNumber}"
-    )
+    navControl.navigate(Screens.AdditionalDateScreen.routes + "/${data.name}" + "/${data.phoneNumber}")
 }
 
 @Composable
 fun ViewAccountScreen(accountViewModel: RegisterViewModel, navController: NavHostController) {
-
     var name by remember { mutableStateOf("") }
-    val emailViewModel: VerifyEmailViewModel = viewModel<VerifyEmailViewModel>()
-    val phoneNumberViewModel: PhoneNumberViewModel = viewModel<PhoneNumberViewModel>()
-    val passwordViewModel: VerifyPasswordViewModel = viewModel<VerifyPasswordViewModel>()
+    var passwordVisible by remember { mutableStateOf(false) }
+    var submitted by remember { mutableStateOf(false) }
+    val emailViewModel: VerifyEmailViewModel = viewModel()
+    val phoneViewModel: PhoneNumberViewModel = viewModel()
+    val passwordViewModel: VerifyPasswordViewModel = viewModel()
+    val accountState by accountViewModel.state.collectAsState()
 
-    val focusManager = LocalFocusManager.current
-    val nameFocusRequester = remember { FocusRequester() }
-    val emailFocusRequester = remember { FocusRequester() }
-    val phoneFocusRequester = remember { FocusRequester() }
-    val passwordFocusRequester = remember { FocusRequester() }
-
-    // Validar que ningun campo queda vacio y con errores
-    val isButtonEnabled = name.isNotBlank()
-            && emailViewModel.email.isNotBlank()
-            && phoneNumberViewModel.phoneNumber.isNotBlank()
-            && passwordViewModel.password.isNotBlank()
-            && !emailViewModel.emailHasErrors
-            && !phoneNumberViewModel.phoneNumberHasErrors
-            && !passwordViewModel.passwordHasErrors
-
-    // guardo los valores en accountData
     val accountData = AccountData(
-        name,
-        emailViewModel.email,
-        "",
-        phoneNumberViewModel.phoneNumber,
-        "",
-        passwordViewModel.password
+        name = name,
+        email = emailViewModel.email,
+        phoneNumber = phoneViewModel.phoneNumber,
+        password = passwordViewModel.password
     )
+    val canContinue = name.isNotBlank() && emailViewModel.email.isNotBlank() &&
+        phoneViewModel.phoneNumber.isNotBlank() && passwordViewModel.password.isNotBlank() &&
+        !emailViewModel.emailHasErrors && !phoneViewModel.phoneNumberHasErrors &&
+        !passwordViewModel.passwordHasErrors
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 16.dp)
-            .imePadding()
-    ) {
-
-
-            ToolbarUsersType("Registrate como usuario")
-
-            EditTextCustom(
-                text = name,
-                onValueChange = {name = it},
-                textType = Constants.SIMPLE_TEXT,
-                elevationText = "Ingresa tu nombre",
-                hint = "",
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { emailFocusRequester.requestFocus() }
-                ),
-                modifier = Modifier.focusRequester(nameFocusRequester),
-                validatorHasErrors = false
-
-            )
-
-            EditTextCustom(
-                text = emailViewModel.email,
-                onValueChange = { input -> emailViewModel.updateEmail(input) },
-                textType = Constants.EMAIL,
-                elevationText = "Ingresa un email válido",
-                hint = "",
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { phoneFocusRequester.requestFocus() }
-                ),
-                modifier = Modifier
-                    .focusRequester(emailFocusRequester),
-                validatorHasErrors = emailViewModel.emailHasErrors
-
-             )
-
-            EditTextCustom(
-                text = phoneNumberViewModel.phoneNumber,
-                onValueChange = {input -> phoneNumberViewModel.updatePhoneNumber(input) },
-                textType = Constants.PHONE_NUMBER,
-                elevationText = "número telefónico",
-                hint = "",
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Phone,
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { passwordFocusRequester.requestFocus() }
-                ),
-                modifier = Modifier.focusRequester(phoneFocusRequester),
-                validatorHasErrors = phoneNumberViewModel.phoneNumberHasErrors
-
-            )
-
-            EditTextCustom(
-                text = passwordViewModel.password,
-                onValueChange = {input -> passwordViewModel.updatePassword(input) },
-                textType = Constants.PASSWORD,
-                elevationText = "Contraseña",
-                hint = "",
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { focusManager.clearFocus() }
-                ),
-                modifier = Modifier.focusRequester(passwordFocusRequester),
-                validatorHasErrors = passwordViewModel.passwordHasErrors
-            )
-
-            Spacer(modifier =
-                Modifier.weight(1f))
-
-        OutlinedRoundedButton (
-            enabled = isButtonEnabled,
-            onClick = {
-                Log.d("ACCOUNT DATA CONTENT", accountData.toString())
-                accountViewModel.register(accountData) },// Aca se envia los datos del usuario al viewmodel y se obtienen arriba.
-            text = "Continuar"
-        )
-
-        val viewmodel = accountViewModel.state.collectAsState()
-
-        when (val state = viewmodel.value) {
-            is ResourceFlow.Idle -> {}
-            is ResourceFlow.Loading -> Log.d("STATE", "CARGANDO")
-            is ResourceFlow.Success -> {
-                Log.d("STATE ACCOUNT", state.data.toString())
-                LaunchedEffect(Unit) {
-                    navigateToAdittionalsDate(accountData, navController)
-                }
-            }
-            is ResourceFlow.Error -> Log.d("STATE", "ESTADO ERROR ${state.message}")
+    if (accountState is ResourceFlow.Success) {
+        LaunchedEffect((accountState as ResourceFlow.Success<*>).data) {
+            navigateToAdittionalsDate(accountData, navController)
         }
-
     }
 
+    Scaffold(
+        topBar = { ToolbarUsersType("Registro") },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { insets ->
+        Column(
+            modifier = Modifier.fillMaxSize().padding(insets).imePadding()
+                .verticalScroll(rememberScrollState()).padding(horizontal = 22.dp, vertical = 18.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text("Sumá un nuevo socio", style = MaterialTheme.typography.headlineSmall)
+            Text("PASO 1 DE 2", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+            androidx.compose.material3.LinearProgressIndicator(progress = 0.5f, modifier = Modifier.fillMaxWidth())
+            Text("Datos de acceso", style = MaterialTheme.typography.titleMedium)
+            Text("Usaremos estos datos para crear su cuenta.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Nombre completo") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                shape = MaterialTheme.shapes.large
+            )
+            OutlinedTextField(
+                value = emailViewModel.email,
+                onValueChange = emailViewModel::updateEmail,
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Correo electrónico") },
+                singleLine = true,
+                isError = emailViewModel.emailHasErrors,
+                supportingText = { if (emailViewModel.emailHasErrors) Text("Revisá el formato del correo") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+                shape = MaterialTheme.shapes.large
+            )
+            OutlinedTextField(
+                value = phoneViewModel.phoneNumber,
+                onValueChange = phoneViewModel::updatePhoneNumber,
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Teléfono") },
+                singleLine = true,
+                isError = phoneViewModel.phoneNumberHasErrors,
+                supportingText = { if (phoneViewModel.phoneNumberHasErrors) Text("Ingresá entre 8 y 15 dígitos; podés incluir el prefijo +54") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone, imeAction = ImeAction.Next),
+                shape = MaterialTheme.shapes.large
+            )
+            OutlinedTextField(
+                value = passwordViewModel.password,
+                onValueChange = passwordViewModel::updatePassword,
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Contraseña") },
+                singleLine = true,
+                isError = passwordViewModel.passwordHasErrors,
+                supportingText = { if (passwordViewModel.passwordHasErrors) Text("Usá al menos 8 caracteres, una mayúscula y un número") },
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                            contentDescription = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña"
+                        )
+                    }
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+                shape = MaterialTheme.shapes.large
+            )
+
+            if (accountState is ResourceFlow.Error) {
+                Text((accountState as ResourceFlow.Error).message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+            }
+            Button(
+                onClick = {
+                    submitted = true
+                    accountViewModel.register(accountData)
+                },
+                enabled = canContinue && !submitted,
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+            ) {
+                if (submitted && accountState is ResourceFlow.Loading) {
+                    CircularProgressIndicator(modifier = Modifier.padding(end = 10.dp), strokeWidth = 2.dp)
+                    Text("Creando cuenta…")
+                } else Text("Continuar")
+            }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                Text("¿Ya tiene cuenta?", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        }
+    }
+
+    if (accountState is ResourceFlow.Error && submitted) {
+        LaunchedEffect(accountState) { submitted = false }
+    }
 }
-
-/**
- * Proximos pasos aqui: Darle el correcto funcionamiento a los textos. Por ejemplo: Al password; Que contenga
- * mensajes de error por falta de mayusculas o numeros.
- * en el mail. para asegurarme de que sea un mail correcto.
- * Eventualmente agregar verificacion de numero de telefono y mail. para estar seguro de que cada texto es correcto.
- *
- * Ya se agregó STORAGE a firebase. y se creó una carpeta para imagenes de perfil.
- * TODO Guardar las imagenes en esta ruta: profileImages/{userId}/profile.jpg
- *  (Donde {userId} es el uid de Firebase Authentication).
- * **/
-

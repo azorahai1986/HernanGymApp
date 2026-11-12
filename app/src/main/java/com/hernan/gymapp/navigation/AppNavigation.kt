@@ -20,7 +20,6 @@ import com.hernan.gymapp.account.presentation.viewmodel.AdditionalDateViewModel
 import com.hernan.gymapp.account.presentation.viewmodel.RegisterViewModel
 import com.hernan.gymapp.calendary.presentation.ui.CalendaryScreen
 import com.hernan.gymapp.user_type.presentation.viewmodel.ClientViewModel
-import com.hernan.gymapp.main_screen.common.presentation.viewmodel.StateViewModel
 import com.hernan.gymapp.common.ui_app.SplashScreen
 import com.hernan.gymapp.common.ui_app.TurnsScreen
 import com.hernan.gymapp.main_screen.common.presentation.ui.screen.MainScreen
@@ -34,6 +33,7 @@ import com.hernan.gymapp.routins_and_excercises.presentation.viewmodel.RoutineVi
 import com.hernan.gymapp.user_type_selected.presentation.ui.screens.screen.UsersScreen
 import com.hernan.gymapp.user_type.presentation.ui.screens.UsersTypeScreen
 import com.hernan.gymapp.user_type_selected.presentation.viewmodel.UserTypeSelectedVM
+import com.hernan.gymapp.user_type_selected.presentation.viewmodel.UserDetailViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,7 +41,7 @@ import com.hernan.gymapp.user_type_selected.presentation.viewmodel.UserTypeSelec
 
 @Composable
 fun AppNavigation(){
-    var isdarkTheme = true
+    val isdarkTheme = false
 
 
     val navController = rememberNavController()
@@ -52,8 +52,8 @@ fun AppNavigation(){
         }
 
         composable(route = MainScreen.routes){
-            val firstViewModel: StateViewModel = hiltViewModel()
-            MainScreen(isdarkTheme, navController, firstViewModel)
+            val userDetailViewModel: UserDetailViewModel = hiltViewModel()
+            MainScreen(navController, userDetailViewModel)
         }
 
         composable(route = Screens.TurnsScreen.routes + "/{text}",
@@ -164,8 +164,7 @@ fun AppNavigation(){
             }
 
         composable(route = Screens.CalendaryScreen.routes){
-            //val accountViewModel: RegisterViewModel = hiltViewModel()
-            CalendaryScreen()
+            CalendaryScreen(navController)
         }
 
         }

@@ -1,29 +1,25 @@
 package com.hernan.gymapp.user_type_selected.presentation.ui.views.user_screen_views
 
-import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hernan.gymapp.R
 import com.hernan.gymapp.user_type_selected.domain.model.UserTypeSelected
@@ -40,53 +36,44 @@ fun UserList(
     coroutineScope: CoroutineScope,
     userDetailViewModel: UserDetailViewModel = hiltViewModel()
 ) {
-
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(120.dp)
-            .padding(vertical = 10.dp, horizontal = 5.dp)
-            .border(
-                width = 2.dp,
-                color = MaterialTheme.colorScheme.primary, // Cambiá este color como quieras
-                shape = RoundedCornerShape(16.dp)
-            ),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background,
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
         onClick = {
-            userDetailViewModel.setSelectedUser(users) // 📌 Guardamos el usuario seleccionado en el ViewModel
-            coroutineScope.launch {
-                bottomSheetScaffoldState.bottomSheetState.expand() // Abrimos el BottomSheet
-            }
+            userDetailViewModel.setSelectedUser(users)
+            coroutineScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
         }
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
         ) {
             GlideImage(
-                imageModel = { users.userImage ?: R.drawable.logo_eze_solo_nombre }, // Evita que image sea null
-                modifier = Modifier
-                    .size(88.dp)
-                    .clip(CircleShape)
+                imageModel = { if (users.userImage.isBlank()) R.drawable.avatar else users.userImage },
+                modifier = Modifier.size(52.dp).clip(CircleShape)
             )
-            Spacer(modifier = Modifier.width(30.dp))
-
-            Text(
-                text = users.name ?: "Usuario desconocido", // Maneja caso nulo
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.surfaceTint
-            )
+            Spacer(Modifier.width(12.dp))
+            androidx.compose.foundation.layout.Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                Text(users.name.ifBlank { "Socio sin nombre" }, style = MaterialTheme.typography.titleSmall)
+                Text(
+                    "${users.typeId.ifBlank { "Socio" }} · ${users.classes.ifBlank { "0" }} clases",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            val statusColor = if (users.pay) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error
+            val statusBackground = if (users.pay) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.errorContainer
+            Surface(shape = CircleShape, color = statusBackground) {
+                Text(
+                    if (users.pay) "Al día" else "Pendiente",
+                    modifier = Modifier.padding(horizontal = 9.dp, vertical = 5.dp),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = statusColor
+                )
+            }
         }
-        //TODO ver si es bueno agregar una luz por tipo de cliente. como una especie de semaforo señalador. Por ejemplo:
-        // Si es Basisc - Luz verde
-        // Si es MediaForce - Luz Amarilla
-        // Si es Strongest - Luz Roja.
-        // O ponerle un iconito distintivo. estudiar eso...
     }
 }

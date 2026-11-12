@@ -12,4 +12,19 @@ class UserTypeSelectedUseCase @Inject constructor(
     operator fun invoke(userTypeId: String): Flow<ResourceFlow<List<UserTypeSelected>>> {
         return userTypeSeledRepository.getUserByType(userTypeId)
     }
+
+    fun getAllUsers(): Flow<ResourceFlow<List<UserTypeSelected>>> = userTypeSeledRepository.getAllUsers()
+
+    suspend fun getUserById(documentId: String): ResourceFlow<UserTypeSelected> =
+        userTypeSeledRepository.getUserById(documentId)
+
+    suspend fun updateSchedule(
+        documentId: String,
+        preferredDays: List<Int>,
+        preferredHours: Map<String, String>,
+        weeklyClassLimit: Int,
+        scheduleMode: String
+    ): ResourceFlow<Unit> = userTypeSeledRepository.updateSchedule(
+        documentId, preferredDays, preferredHours, weeklyClassLimit, scheduleMode
+    )
 }

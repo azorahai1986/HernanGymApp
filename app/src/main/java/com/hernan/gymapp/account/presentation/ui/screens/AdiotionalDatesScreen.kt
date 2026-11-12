@@ -1,26 +1,33 @@
 package com.hernan.gymapp.account.presentation.ui.screens
 
-import android.content.Context
 import android.content.pm.PackageManager
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,12 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,13 +47,9 @@ import com.hernan.gymapp.R
 import com.hernan.gymapp.account.data.model.AdditionalDateDto
 import com.hernan.gymapp.account.presentation.ui.camera.OpenCamera
 import com.hernan.gymapp.account.presentation.ui.views.radiobutton.CustomRadioButton
-import com.hernan.gymapp.common.ui_app.animations.LoadinAnimation
 import com.hernan.gymapp.account.presentation.viewmodel.AdditionalDateViewModel
 import com.hernan.gymapp.common.Constants
 import com.hernan.gymapp.common.state.ResourceFlow
-import com.hernan.gymapp.common.ui_app.buttons.OutlinedRoundedButton
-import com.hernan.gymapp.common.ui_app.text_views.CentredTextField
-import com.hernan.gymapp.common.ui_app.text_views.EditTextCustom
 import com.hernan.gymapp.common.ui_app.toolbar.ToolbarUsersType
 import com.hernan.gymapp.navigation.Screens
 import com.skydoves.landscapist.glide.GlideImage
@@ -64,336 +62,183 @@ fun AdditionalDatesScreen(
     phoneNumber: String?
 ) {
     val userId = FirebaseAuth.getInstance().currentUser?.uid
-    GetDataImage(additionalDateViewModel, userId, name, phoneNumber, navController)
+    AdditionalProfileScreen(additionalDateViewModel, userId, name, phoneNumber, navController)
 }
 
-
 @Composable
-fun GetDataImage(
-    additionalDateViewModel: AdditionalDateViewModel,
+private fun AdditionalProfileScreen(
+    viewModel: AdditionalDateViewModel,
     userId: String?,
     name: String?,
     phoneNumber: String?,
     navController: NavHostController
 ) {
     var profilePhoto by remember { mutableStateOf("") }
-    var isSuccessImage by remember { mutableStateOf(false) }
-    var isImageLoading by remember { mutableStateOf(false) }
-    val viewModelImage = additionalDateViewModel.uploadImage.collectAsState()
-
-    when (val state = viewModelImage.value) {
-        is ResourceFlow.Idle -> {}
-        is ResourceFlow.Loading -> {
-            LoadinAnimation(true) // La animación entra en pantalla
-            isImageLoading = true
-            Log.d("ADDITIONAL STATE", "Cargando")
-        }
-        is ResourceFlow.Success -> {  // La imagen se cargó. se obtiene el Url string del Storage
-            profilePhoto = state.data
-            LoadinAnimation(false)  // La animación sale de pantalla
-            isSuccessImage = true
-            isImageLoading = false
-            Log.d("ADDITIONAL STATE", state.data)
-        }
-        is ResourceFlow.Error -> Log.d("STATE", "ESTADO ERROR ${state.message}")
-    }
-
-    ShowView(userId, additionalDateViewModel, name, phoneNumber, profilePhoto, isSuccessImage, isImageLoading, navController)
-
-}
-
-@Composable
-fun ShowView(
-    userId: String?,
-    additionalDateViewModel: AdditionalDateViewModel,
-    name: String?,
-    phoneNumber: String?,
-    profilePhoto: String,
-    isSuccessImage: Boolean,
-    isImageLoading: Boolean,
-    navController: NavHostController,
-) {
-
-    val focusManager = LocalFocusManager.current
-    var capturedImage by remember { mutableStateOf<ByteArray?>(null) }
     var age by remember { mutableStateOf("") }
     var bodyWeight by remember { mutableStateOf("") }
-    // valores tomados de la lista de radioButton
-    val selectedObjectives = remember { mutableStateOf("") }
-    val selectedHealth = remember { mutableStateOf("") }
-    val selectedGender = remember { mutableStateOf("") }
+    var gender by remember { mutableStateOf("") }
+    var health by remember { mutableStateOf("") }
+    var objective by remember { mutableStateOf("") }
+    val uploadState by viewModel.uploadImage.collectAsState()
+    val saveState by viewModel.userAcconted.collectAsState()
+    val isUploading = uploadState is ResourceFlow.Loading
+    val parsedAge = age.toIntOrNull()
+    val parsedWeight = bodyWeight.toFloatOrNull()
+    val canSubmit = parsedAge != null && parsedAge in 1..120 &&
+        parsedWeight != null && parsedWeight in 1f..500f &&
+        gender.isNotBlank() && health.isNotBlank() && objective.isNotBlank()
 
-    // Listas para los RadioButtons
-    val genderOptions = listOf("Masculino", "Femenino", "No Binario")
-    val healthStateOptions = listOf("Bueno", "Regular", "Malo")
-    val objectiveOptions = listOf("Quemar grasas", "Tonificar Musculos", "Incrementar masa muscular", "Todas las anteriores")
-
-    val ageFocusRequester = remember { FocusRequester() }
-    val bodyWeightFocusRequester = remember { FocusRequester() }
-
-    val isButtonEnabled = age.isNotBlank()
-            && bodyWeight.isNotBlank()
-            && selectedGender.value.isNotBlank()
-            && selectedHealth.value.isNotBlank()
-            && selectedObjectives.value.isNotBlank()
-
-    val userAccounted = additionalDateViewModel.userAcconted.collectAsState()
-
-    when (val state = userAccounted.value) {
-        is ResourceFlow.Idle -> {}
-        is ResourceFlow.Loading -> Log.d("STATE", "CARGANDO")
-        is ResourceFlow.Success -> {
-            Log.d("USER ACCOUNTED STATE", state.data.toString())
-            LoadinAnimation(true)
-            navController.navigate(route = Screens.MainScreen.routes)
+    LaunchedEffect(uploadState) {
+        if (uploadState is ResourceFlow.Success) profilePhoto = (uploadState as ResourceFlow.Success<String>).data
+    }
+    LaunchedEffect(saveState) {
+        if (saveState is ResourceFlow.Success) {
+            navController.navigate(Screens.CalendaryScreen.routes) {
+                popUpTo(Screens.AccountScreen.routes) { inclusive = true }
+            }
         }
-        is ResourceFlow.Error -> Log.d("STATE", "ESTADO ERROR ${state.message}")
     }
 
-    val dataUserAccounted = AdditionalDateDto(
+    val member = AdditionalDateDto(
         typeId = "Basic",
-        name = name ?: "No Name",
+        name = name.orEmpty(),
         userImage = profilePhoto,
-        classes = "0",  // se completará cuando el cliente realice un pago. Segun la forma. si paga por clase o por mes, etc
+        classes = "0",
         edad = "$age años",
-        estadoSalud = selectedHealth.value,
-        objetivo = selectedObjectives.value, /**TODO que pueda elegir mas de una opción. evaluar eso**/
-        phoneNumber = phoneNumber ?: "0000-0000",
-        weight = "$bodyWeight kgms",
-        gender = selectedGender.value,
-        pay = false
+        estadoSalud = health,
+        objetivo = objective,
+        phoneNumber = phoneNumber.orEmpty(),
+        weight = "$bodyWeight kg",
+        gender = gender,
+        pay = false,
+        preferredDays = emptyList(),
+        preferredHours = emptyMap(),
+        weeklyClassLimit = 2,
+        scheduleMode = "FIXED"
     )
 
-    /** [imePadding] es una función modificadora (Modifier) que ajusta automáticamente
-     *  el espaciado del contenido de una pantalla cuando aparece el teclado en pantalla**/
+    androidx.compose.material3.Scaffold(
+        topBar = { ToolbarUsersType("Completar perfil") },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { insets ->
+        Column(
+            modifier = Modifier.fillMaxSize().padding(insets).imePadding()
+                .verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text("Perfil del socio", style = MaterialTheme.typography.headlineSmall)
+            Text("PASO 2 DE 2", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+            androidx.compose.material3.LinearProgressIndicator(progress = 1f, modifier = Modifier.fillMaxWidth())
+            Text("Algunos datos ayudan a adaptar su entrenamiento.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 16.dp)
-            .imePadding()
-    ) {
-
-        if (!isSuccessImage) {
-            item { ToolbarUsersType(stringResource(R.string.info_for_toolbar, name ?: "Usuario")) }
-            item {
-                Spacer(modifier = Modifier.height(20.dp))
-                CentredTextField(stringResource(R.string.info_for_selfies), 18.sp)
-                Spacer(modifier = Modifier.height(16.dp)) }
-        }
-
-        if (!isImageLoading) {
-            item { UserImage(
-                imageFromsStorage = profilePhoto,
-                onImageCaptured = { imageBytes ->
-                    capturedImage = imageBytes
-                    // Apenas captes la imagen, subila a storage
-                    additionalDateViewModel.setimageToStorage(userId, imageBytes)
-                })
-            }
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(28.dp))
-            if (isImageLoading) {
-                CentredTextField("Cargando Imagen. Por favor espera...", 12.sp)
-            } else {
-                CentredTextField("Elige una imagen de la galería", 12.sp)
-            }
-        }
-
-        if (isSuccessImage) {
-            item { EditTextCustom(
-                text = age,
-                onValueChange = {age = it},
-                textType = Constants.SIMPLE_TEXT,
-                elevationText = "Ingresa tu edad",
-                hint = "",
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { bodyWeightFocusRequester.requestFocus() }
-                ),
-                modifier = Modifier
-                    .focusRequester(ageFocusRequester),
-                validatorHasErrors = false
-            ) }
-
-            item { EditTextCustom(
-                text = bodyWeight,
-                onValueChange = {bodyWeight = it},
-                textType = Constants.SIMPLE_TEXT,
-                elevationText = "Peso corporal",
-                hint = "",
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { focusManager.clearFocus() }
-                ),
-                modifier = Modifier.focusRequester(bodyWeightFocusRequester),
-                validatorHasErrors = false
-            ) }
-
-            // RadioButton de genero...........
-            item { CentredTextField("Elige el género", 16.sp) }
-            item {
-                Spacer(modifier = Modifier.height(18.dp))
-
-                CustomRadioButton(
-                selectedOption = selectedGender.value.toString(),
-                onOptionSelected = { selectedGender.value = it },
-                modifier = Modifier,
-                radioOptions = genderOptions
-                )}
-
-            item {
-                Spacer(modifier = Modifier.height(18.dp))
-                CentredTextField("Señala tu estado de salud", 16.sp)
-            }
-            // RadioButton de Estado de Salud..........
-            item {
-                Spacer(modifier = Modifier.height(18.dp))
-
-                CustomRadioButton(
-                    selectedOption = selectedHealth.value,
-                    onOptionSelected = {
-                        selectedHealth.value = it
-                                        },
-                    modifier = Modifier,
-                    radioOptions = healthStateOptions
-                )}
-
-            // RadioButton de Estado de Objetivos..........
-            item {
-                Spacer(modifier = Modifier.height(18.dp))
-                CentredTextField("Señala tus Objetivos a lograr", 16.sp)
-            }
-            item {
-                Spacer(modifier = Modifier.height(18.dp))
-
-                CustomRadioButton(
-                    selectedOption = selectedObjectives.value,
-                    onOptionSelected = {selectedObjectives.value = it},
-                    modifier = Modifier,
-                    radioOptions = objectiveOptions
-                )
-                Spacer(modifier = Modifier.height(28.dp))
-
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(14.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    ProfilePhotoPicker(
+                        photoUrl = profilePhoto,
+                        enabled = !isUploading,
+                        onImageCaptured = { image -> viewModel.setimageToStorage(userId, image) }
+                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text("Foto de perfil (opcional)", style = MaterialTheme.typography.titleSmall)
+            Text("Tocá la imagen para tomar una foto; también podés omitirla.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        if (isUploading) CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                        if (uploadState is ResourceFlow.Error) Text("No se pudo subir la foto. Podés continuar sin ella.", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                    }
+                }
             }
 
-            item { OutlinedRoundedButton(
-                enabled = isButtonEnabled,
-                onClick = {
-                    additionalDateViewModel.saveUser(
-                        collectionPath = Constants.COLLECTION_MEMBERS,
-                        documentId = userId ?: "No User",
-                        user = dataUserAccounted)
-
-                },
-                text = "Registrarse"
+            OutlinedTextField(
+                value = age,
+                onValueChange = { age = it.filter(Char::isDigit).take(3) },
+                modifier = Modifier.fillMaxWidth(), label = { Text("Edad") }, suffix = { Text("años") },
+                singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                shape = MaterialTheme.shapes.large
             )
-                Spacer(modifier = Modifier.height(28.dp))
+            OutlinedTextField(
+                value = bodyWeight,
+                onValueChange = { bodyWeight = it.filter { char -> char.isDigit() || char == '.' || char == ',' }.replace(',', '.').take(6) },
+                modifier = Modifier.fillMaxWidth(), label = { Text("Peso corporal") }, suffix = { Text("kg") },
+                singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                shape = MaterialTheme.shapes.large
+            )
 
+            ChoiceSection("Género", listOf("Masculino", "Femenino", "No binario"), gender) { gender = it }
+            ChoiceSection("Estado de salud", listOf("Bueno", "Regular", "Malo"), health) { health = it }
+            ChoiceSection("Objetivo principal", listOf("Quemar grasas", "Tonificar músculos", "Incrementar masa muscular", "Otro"), objective) { objective = it }
+
+            Text("Tus turnos", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "Después de crear tu perfil, vas a elegir la frecuencia, los días y horarios en el calendario.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            if (saveState is ResourceFlow.Error) {
+                Text((saveState as ResourceFlow.Error).message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
             }
+            Button(
+                onClick = {
+                    if (!userId.isNullOrBlank()) {
+                        viewModel.saveUser(Constants.COLLECTION_MEMBERS, userId, member)
+                    }
+                },
+                enabled = canSubmit && !isUploading && saveState !is ResourceFlow.Loading && !userId.isNullOrBlank(),
+                modifier = Modifier.fillMaxWidth().padding(top = 6.dp)
+            ) {
+                if (saveState is ResourceFlow.Loading) CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
+                else Text("Finalizar registro")
+            }
+            if (userId.isNullOrBlank()) Text("No pudimos identificar la cuenta creada. Volvé a iniciar el registro.", color = MaterialTheme.colorScheme.error)
+            Spacer(Modifier.height(12.dp))
         }
     }
 }
-/**
- * LLamo a la imagen circular con la imagen de user. si se concede el permiso se podra tomar una selfie
- * **/
-@Composable
-fun UserImage(
-    imageFromsStorage: String,
-    onImageCaptured: (ByteArray) -> Unit
-)
-{
 
+@Composable
+private fun ChoiceSection(title: String, options: List<String>, selected: String, onSelected: (String) -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(title, style = MaterialTheme.typography.titleSmall)
+        CustomRadioButton(
+            selectedOption = selected,
+            onOptionSelected = onSelected,
+            radioOptions = options
+        )
+    }
+}
+
+@Composable
+private fun ProfilePhotoPicker(photoUrl: String, enabled: Boolean, onImageCaptured: (ByteArray) -> Unit) {
     val context = LocalContext.current
     var showCamera by remember { mutableStateOf(false) }
-    var shootToast by remember { mutableStateOf(false) }
-    /**
-     * Solicito los permisos necesarios y
-     * abro la camara
-     * **/
-
     val permission = android.Manifest.permission.CAMERA
     var hasCameraPermission by remember {
-        mutableStateOf(
-            ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
-        )
+        mutableStateOf(ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED)
     }
-    /**Obtengo el permiso y cambio el valor de "hasCameraPermission"
-     * Con "rememberLauncherForActivityResult" actualizo en tiemporeal el permiso desde el click en la imagen **/
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        hasCameraPermission = isGranted
+    val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        hasCameraPermission = granted
+        if (granted) showCamera = true
     }
 
-        if (showCamera) {
-            OpenCamera(
-                onImageCaptured = { imageBytes ->
-                    onImageCaptured(imageBytes)
-                    showCamera = false // Después de sacar la foto, cerramos la cámara
-                },
-                onError = { exception ->
-                    showCamera = false // También cerramos si hubo error
+    if (showCamera) {
+        OpenCamera(
+            onImageCaptured = { bytes -> onImageCaptured(bytes); showCamera = false },
+            onError = { showCamera = false }
+        )
+    } else {
+        GlideImage(
+            imageModel = { if (photoUrl.isBlank()) R.drawable.avatar else photoUrl },
+            modifier = Modifier.size(76.dp).clip(CircleShape)
+                .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                .clickable(enabled = enabled) {
+                    if (hasCameraPermission) showCamera = true else permissionLauncher.launch(permission)
                 }
-            )
-        } else {
-            Column (
-                modifier = Modifier
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                GlideImage(
-                    imageModel = {
-                        if (imageFromsStorage.isNotBlank()) imageFromsStorage else R.drawable.avatar
-                    },
-                    modifier = Modifier
-                        .size(250.dp)
-                        .padding(15.dp)
-                        .clip(CircleShape)
-                        .border(
-                            width = 4.dp,
-                            color = MaterialTheme.colorScheme.secondaryContainer,
-                            shape = CircleShape
-                        )
-                        .clickable {
-                            if (!hasCameraPermission) {
-                                permissionLauncher.launch(permission)
-                                shootToast = true
-                            } else {
-                                showCamera = true
-                            }
-
-                        }
-                )
-            }
-        }
-
-    /** si no tengo permiso. Lanzo un Toast informando donde solicitarlo en la configuracion**/
-    if (shootToast) {
-        ShowToastMessage(
-            message = stringResource(R.string.go_to_config_for_camera_permission),
-            context = context
         )
-        shootToast = false
     }
 }
-
-@Composable
-fun ShowToastMessage(message: String, context: Context) {
-    val duration = Toast.LENGTH_SHORT
-
-    val toast = Toast.makeText(context, message, duration)
-    toast.show()
-}
-
-/**
- * TODO crear los spinner para el genero, para el estado de salud, y objetivos.
- * **/

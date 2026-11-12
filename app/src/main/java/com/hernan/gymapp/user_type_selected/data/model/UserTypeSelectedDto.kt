@@ -12,20 +12,31 @@ data class UserTypeSelectedDto(
     var objetivo: String = "",
     var phoneNumber: String = "",
     var weight: String = "",
+    var gender: String = "",
     var pay: Boolean = false,
+    var preferredDays: List<Int> = emptyList(),
+    var preferredHours: Map<String, String> = emptyMap(),
+    var weeklyClassLimit: Int = 2,
+    var scheduleMode: String = "FIXED",
 ) {
-    fun toDomain(): UserTypeSelected {
+    fun toDomain(documentId: String = ""): UserTypeSelected {
         return UserTypeSelected(
-            typeId,
-            name,
-            userImage,
-            classes,
-            edad,
-            estadoSalud,
-            objetivo,
-            phoneNumber,
-            weight,
-            pay
+            documentId = documentId,
+            typeId = typeId,
+            name = name,
+            userImage = userImage,
+            classes = classes,
+            edad = edad,
+            estadoSalud = estadoSalud,
+            objetivo = objetivo,
+            phoneNumber = phoneNumber,
+            weight = weight,
+            gender = gender,
+            pay = pay,
+            preferredDays = preferredDays,
+            preferredHours = preferredHours,
+            weeklyClassLimit = weeklyClassLimit,
+            scheduleMode = scheduleMode
         )
     }
 }

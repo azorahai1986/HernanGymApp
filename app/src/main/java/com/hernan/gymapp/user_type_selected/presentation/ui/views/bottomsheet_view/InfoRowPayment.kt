@@ -40,7 +40,7 @@ fun InfoRowPayment(text:String, isPaid: Boolean, image: Int) {
         Text(
             text,
             fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.surfaceTint,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
                 .padding(start = 2.dp, bottom = 2.dp)
                 .align(Alignment.CenterVertically)

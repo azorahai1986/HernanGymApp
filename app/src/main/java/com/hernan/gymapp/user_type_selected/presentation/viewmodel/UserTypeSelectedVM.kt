@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+const val ALL_USERS_FILTER = "all"
+
 @HiltViewModel
 class UserTypeSelectedVM @Inject constructor(
     private val userTypeSelectedUseCase: UserTypeSelectedUseCase
@@ -27,7 +29,12 @@ class UserTypeSelectedVM @Inject constructor(
          * **/
         if (_userType.value is ResourceFlow.Success) return
         viewModelScope.launch {
-            userTypeSelectedUseCase(clientId).collectLatest { result ->
+            val usersFlow = if (clientId == ALL_USERS_FILTER) {
+                userTypeSelectedUseCase.getAllUsers()
+            } else {
+                userTypeSelectedUseCase(clientId)
+            }
+            usersFlow.collectLatest { result ->
                 _userType.value = result
             }
         }

@@ -57,10 +57,10 @@ fun EditTextCustom(text:String,
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 10.dp, horizontal = 55.dp)
-            .background(color = MaterialTheme.colorScheme.scrim),
+            .background(color = MaterialTheme.colorScheme.background),
         enabled = true,
         readOnly = false,
-        textStyle = TextStyle(color = Color.White),
+        textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface),
         leadingIcon = {
             when(textType) { // Seleccionar un icono para el lado izquierdo de la vista
                 Constants.SIMPLE_TEXT -> Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "")
@@ -105,9 +105,9 @@ fun EditTextCustom(text:String,
         minLines = 1,
         colors = TextFieldDefaults.textFieldColors(
             containerColor = Color.Transparent,
-            focusedTextColor = Color.White,
-            disabledTextColor = Color.DarkGray,
-            cursorColor = Color.White
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            disabledTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            cursorColor = MaterialTheme.colorScheme.primary
         ),
         shape = RoundedCornerShape(18.dp)
 

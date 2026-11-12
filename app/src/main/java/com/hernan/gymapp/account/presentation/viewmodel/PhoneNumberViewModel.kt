@@ -13,7 +13,7 @@ class PhoneNumberViewModel: ViewModel() {
 
     val phoneNumberHasErrors by derivedStateOf {
         if (phoneNumber.isNotEmpty()) {
-            !Regex("^\\d{1,10}$").matches(phoneNumber)
+            phoneNumber.count(Char::isDigit) !in 8..15
 
         } else {
             false
@@ -21,6 +21,6 @@ class PhoneNumberViewModel: ViewModel() {
     }
 
     fun updatePhoneNumber(input: String) {
-        phoneNumber = input
+        phoneNumber = input.filter { it.isDigit() || it in "+ ()-" }.take(20)
     }
 }

@@ -10,7 +10,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.airbnb.lottie.compose.LottieAnimation
@@ -38,7 +37,7 @@ fun QrSuccessRegistration(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black),
+                .background(androidx.compose.material3.MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
             LottieAnimation(

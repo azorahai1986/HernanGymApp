@@ -41,6 +41,7 @@ class AdditionalDateViewModel @Inject constructor(
     fun saveUser(collectionPath: String,
                  documentId: String,
                  user: AdditionalDateDto) {
+        _userAcconted.value = ResourceFlow.Loading
         viewModelScope.launch {
             additionalDateUseCase(collectionPath, documentId, user).collect { state ->
                     _userAcconted.value = state
